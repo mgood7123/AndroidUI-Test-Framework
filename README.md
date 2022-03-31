@@ -281,7 +281,7 @@ Ran Tests in Alphaberical Order
 
 # Test inheritence
 
-a `Test` can also inherit another `Test`
+a `Test` can inherit another `Test`
 
 ```cs
 class BASE_TEST : AndroidUITestFramework.Test
@@ -312,8 +312,6 @@ output:
         TEST! INHERITED
     [Running      OK] Test: inherited_test
 ```
-
-a `Test` can inherit another `Test`
 
 likewise a `TestGroup` can also inherit a `TestGroup`
 
