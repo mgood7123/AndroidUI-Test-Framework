@@ -278,9 +278,9 @@ Running Tests in Alphaberical Order...
 Ran Tests in Alphaberical Order
 ```
 
-a `Test` can also inherit another `Test`
+# Test inheritence
 
-inheriting a `Test` part of a `TestGroup` is `NOT SUPPORTED` and will result in `Undefined Behaviour`
+a `Test` can also inherit another `Test`
 
 ```cs
 class BASE_TEST : AndroidUITestFramework.Test
@@ -310,6 +310,53 @@ output:
         TEST! 1
         TEST! INHERITED
     [Running      OK] Test: inherited_test
+```
+
+a `Test` can inherit another `Test`
+
+likewise a `TestGroup` can also inherit a `TestGroup`
+
+in most cases it will work fine provided:
+* the test is part of the same test tree and groups inherit from parent group
+
+example
+```cs
+class g : TestGroup 
+{
+    int data;
+    class s : g
+    {
+        class Data : Test
+        {
+            g data;
+            public override void Run(TestGroup nullableInstance)
+            {
+                // set our instance of data
+                // to our parent `g`
+                // this is possible as `s` inherits `g`
+                //
+                // we may also be able to set `g.data` directly
+                // but this will COPY if `g.data` is a VALUE TYPE
+                data = (g)nullableInstance;
+            }
+        }
+        class n : g
+        {
+            class test : Data
+            {
+                public override void Run(TestGroup nullableInstance)
+                {
+                    // this works because `n` inherits `g`
+                    // which `Data` expects to recieve as its instance
+                    base.Run(nullableInstance);
+                    // we can quickly access `data` which is of type `g`
+                    data.data = 5;
+                }
+            }
+        }
+    }
+}
+
 ```
 
 # why this framework?
