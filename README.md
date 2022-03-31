@@ -180,6 +180,8 @@ public class a_test_group : TestGroup
 }
 ```
 
+a `Tests` `nullableInstance` will be set to the instance of the `TestGroup` it belongs to
+
 # Nesting
 
 `AndroidUI Test Framework` tries very hard to find all your tests where ever they may be
@@ -274,6 +276,40 @@ Running Tests in Alphaberical Order...
 
 [Running      OK] Group: Top Level
 Ran Tests in Alphaberical Order
+```
+
+a `Test` can also inherit another `Test`
+
+inheriting a `Test` part of a `TestGroup` is `NOT SUPPORTED` and will result in `Undefined Behaviour`
+
+```cs
+class BASE_TEST : AndroidUITestFramework.Test
+{
+    public override void Run(AndroidUITestFramework.TestGroup nullableInstance)
+    {
+        Console.WriteLine("TEST! 1");
+    }
+}
+
+class inherited_test : BASE_TEST
+{
+    public override void Run(AndroidUITestFramework.TestGroup nullableInstance)
+    {
+        base.Run(nullableInstance);
+        Console.WriteLine("TEST! INHERITED");
+    }
+}
+```
+
+output:
+```
+    [Running        ] Test: BASE_TEST
+        TEST! 1
+    [Running      OK] Test: BASE_TEST
+    [Running        ] Test: inherited_test
+        TEST! 1
+        TEST! INHERITED
+    [Running      OK] Test: inherited_test
 ```
 
 # why this framework?
