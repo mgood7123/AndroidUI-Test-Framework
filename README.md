@@ -10,6 +10,7 @@ a C# unit testing framework, based loosely off of GoogleTest
 - [Assertions and Expectations](#assertions-and-expectations)
 - [Tests and TestGroups](#tests-and-testgroups)
 - [Nesting](#nesting)
+- [Test inheritence](#test-inheritence)
 - [why this framework?](#why-this-framework)
   - [NUnit](#nunit)
   - [MSTest](#mstest)
