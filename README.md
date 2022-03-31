@@ -318,7 +318,7 @@ have a look at https://www.lambdatest.com/blog/nunit-vs-xunit-vs-mstest/
 
 
 |Description|NUnit|MSTest|xUnit|AndroidUI Test Framework|
-|-|-|-|
+|-|-|-|-|-|
 |Marks a test method/individual test|[Test]|[TestMethod]|[Fact]|class t : Test|
 |Indicates that a class has a group of unit tests|[TestFixture]|[TestClass]|N.A|class g : TestGroup|
 |Contains the initialization code, which is triggered before every test case|[SetUp]|[TestInitialize]|Constructor|OnCreate|
@@ -640,6 +640,7 @@ Printing Tests Heirarchy
   inherited_test
   EXPECTATIONS
   B_TEST
+  UNHANDLED_TEST_EXCEPTION
   B_TEST
   +Group
     ASSERTION
@@ -660,6 +661,24 @@ Printing Tests Heirarchy
   +FailGroup2
     Test
     No Test Groups Have Been Declared By 'FailGroup2'
+  +UNHANDLED_GROUP_EXCEPTION_CREATE
+    UNHANDLED_TEST_EXCEPTION
+    No Test Groups Have Been Declared By 'UNHANDLED_GROUP_EXCEPTION_CREATE'
+  +UNHANDLED_GROUP_EXCEPTION_DESTROY
+    UNHANDLED_TEST_EXCEPTION
+    No Test Groups Have Been Declared By 'UNHANDLED_GROUP_EXCEPTION_DESTROY'
+  +UNHANDLED_GROUP_EXCEPTION_DESTROY2
+    UNHANDLED_TEST_EXCEPTION
+    No Test Groups Have Been Declared By 'UNHANDLED_GROUP_EXCEPTION_DESTROY2'
+  +UNHANDLED_GROUP_EXCEPTION_2
+    UNHANDLED_TEST_EXCEPTION_1
+    UNHANDLED_TEST_EXCEPTION_2
+    No Test Groups Have Been Declared By 'UNHANDLED_GROUP_EXCEPTION_2'
+  +a_test_group
+    a_test
+    +a_test_group
+      a_test
+      No Test Groups Have Been Declared By 'a_test_group'
   +AndroidUITestFramework_Tests
     UnitTest_1
     UnitTest_2
@@ -684,13 +703,13 @@ Running Tests in Alphaberical Order...
         Message: <No Message Given>
         Location:
            at Method: EXPECTATIONS.Run(TestGroup nullableInstance)
-             in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:57
+             in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:60
         Test Failed
         Reason: Expected the expression to be true, it was false
         Message: <No Message Given>
         Location:
            at Method: EXPECTATIONS.Run(TestGroup nullableInstance)
-             in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:58
+             in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:61
         Test Failed
         Reason: Expected the following instances to be equal
               Actual: EXPECTATIONS
@@ -698,8 +717,20 @@ Running Tests in Alphaberical Order...
         Message: <No Message Given>
         Location:
            at Method: EXPECTATIONS.Run(TestGroup nullableInstance)
-             in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:59
+             in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:62
     [Running  FAILED] Test: EXPECTATIONS
+    [Running        ] Test: inherited_test
+        TEST! 1
+        TEST! INHERITED
+    [Running      OK] Test: inherited_test
+    [Running        ] Test: UNHANDLED_TEST_EXCEPTION
+        UNHANDLED EXCEPTION
+        Exception Type: NullReferenceException
+        Reason: Object reference not set to an instance of an object.
+        Location:
+           at Method: UNHANDLED_TEST_EXCEPTION.Run(TestGroup nullableInstance)
+             in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:240
+    [Running  FAILED] Test: UNHANDLED_TEST_EXCEPTION
 
     [Running        ] Group: Group
         [Running        ] Test: ASSERTION
@@ -709,8 +740,11 @@ Running Tests in Alphaberical Order...
             Message: <No Message Given>
             Location:
                at Method: Group.ASSERTION.Run(TestGroup nullableInstance)
-                 in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:8
+                 in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:10
         [Running  FAILED] Test: ASSERTION
+        [Running        ] Test: TEST_INSIDE_ANOTHER_CLASS
+            TEST! 3
+        [Running      OK] Test: TEST_INSIDE_ANOTHER_CLASS
 
         [Running        ] Group: Group.GROUP_INSIDE_ANOTHER_CLASS
             [Running        ] Test: HOTDOG
@@ -742,7 +776,7 @@ Running Tests in Alphaberical Order...
         Message: <No Message Given>
         Location:
            at Method: FailGroup.OnCreate()
-             in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:139
+             in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:142
     [Running  FAILED] Group: FailGroup
 
     [Running        ] Group: FailGroup2
@@ -756,8 +790,78 @@ Running Tests in Alphaberical Order...
         Message: <No Message Given>
         Location:
            at Method: FailGroup2.OnDestroy()
-             in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:166
+             in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:169
     [Running  FAILED] Group: FailGroup2
+
+    [Running        ] Group: UNHANDLED_GROUP_EXCEPTION_CREATE
+        UNHANDLED EXCEPTION
+        Exception Type: NullReferenceException
+        Reason: Object reference not set to an instance of an object.
+        Location:
+           at Method: UNHANDLED_GROUP_EXCEPTION_CREATE.OnCreate()
+             in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:187
+    [Running  FAILED] Group: UNHANDLED_GROUP_EXCEPTION_CREATE
+
+    [Running        ] Group: UNHANDLED_GROUP_EXCEPTION_DESTROY
+        [Running        ] Test: UNHANDLED_TEST_EXCEPTION
+        [Running      OK] Test: UNHANDLED_TEST_EXCEPTION
+        UNHANDLED EXCEPTION
+        Exception Type: NullReferenceException
+        Reason: Object reference not set to an instance of an object.
+        Location:
+           at Method: UNHANDLED_GROUP_EXCEPTION_DESTROY.OnDestroy()
+             in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:205
+    [Running  FAILED] Group: UNHANDLED_GROUP_EXCEPTION_DESTROY
+
+    [Running        ] Group: UNHANDLED_GROUP_EXCEPTION_DESTROY2
+        [Running        ] Test: UNHANDLED_TEST_EXCEPTION
+            UNHANDLED EXCEPTION
+            Exception Type: NullReferenceException
+            Reason: Object reference not set to an instance of an object.
+            Location:
+               at Method: UNHANDLED_GROUP_EXCEPTION_DESTROY2.UNHANDLED_TEST_EXCEPTION.Run(TestGroup nullableInstance)
+                 in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:230
+        [Running  FAILED] Test: UNHANDLED_TEST_EXCEPTION
+        UNHANDLED EXCEPTION
+        Exception Type: NullReferenceException
+        Reason: Object reference not set to an instance of an object.
+        Location:
+           at Method: UNHANDLED_GROUP_EXCEPTION_DESTROY2.OnDestroy()
+             in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:222
+    [Running  FAILED] Group: UNHANDLED_GROUP_EXCEPTION_DESTROY2
+
+    [Running        ] Group: UNHANDLED_GROUP_EXCEPTION_2
+        [Running        ] Test: UNHANDLED_TEST_EXCEPTION_1
+            UNHANDLED EXCEPTION
+            Exception Type: NullReferenceException
+            Reason: Object reference not set to an instance of an object.
+            Location:
+               at Method: UNHANDLED_GROUP_EXCEPTION_2.UNHANDLED_TEST_EXCEPTION_1.Run(TestGroup nullableInstance)
+                 in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:251
+        [Running  FAILED] Test: UNHANDLED_TEST_EXCEPTION_1
+        [Running        ] Test: UNHANDLED_TEST_EXCEPTION_2
+            UNHANDLED EXCEPTION
+            Exception Type: NullReferenceException
+            Reason: Object reference not set to an instance of an object.
+            Location:
+               at Method: UNHANDLED_GROUP_EXCEPTION_2.UNHANDLED_TEST_EXCEPTION_2.Run(TestGroup nullableInstance)
+                 in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:260
+        [Running  FAILED] Test: UNHANDLED_TEST_EXCEPTION_2
+    [Running  FAILED] Group: UNHANDLED_GROUP_EXCEPTION_2
+
+    [Running        ] Group: a_test_group
+        [Running        ] Test: a_test
+            I AM A TEST INSIDE OF A TEST GROUP AND I AM STILL FOUND
+        [Running      OK] Test: a_test
+
+        [Running        ] Group: a_test_group.a_test_group
+            I AM A TEST GROUP INSIDE OF A TEST GROUP AND I AM STILL FOUND
+            [Running        ] Test: a_test
+                I AM A TEST INSIDE OF A TEST GROUP INSIDE OF ANOTHER TEST GROUP AND I AM STILL FOUND
+            [Running      OK] Test: a_test
+        [Running      OK] Group: a_test_group.a_test_group
+
+    [Running      OK] Group: a_test_group
 
     [Running        ] Group: AndroidUITestFramework_Tests
         Inside OnCreate
@@ -775,6 +879,6 @@ Running Tests in Alphaberical Order...
 [Running  FAILED] Group: Top Level
 Ran Tests in Alphaberical Order
 
-D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\bin\Debug\net6.0\AndroidUITest.exe (process 11076) exited with code 0.
+D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\bin\Debug\net6.0\AndroidUITest.exe (process 27852) exited with code 0.
 Press any key to close this window . . .
 ```
