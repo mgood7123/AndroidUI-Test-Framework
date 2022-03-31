@@ -19,8 +19,6 @@ a C# unit testing framework, based loosely off of GoogleTest
 
 # Color output
 
-you cannot see it from the below text, but we emit colored output
-
 ![](Pictures/Screenshot%202022-03-31%20153513.png)
 ![](Pictures/Screenshot%202022-03-31%20171523.png)
 ![](Pictures/Screenshot%202022-03-31%20174017.png)
