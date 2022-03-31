@@ -330,8 +330,7 @@ class g : TestGroup
             g data;
             public override void Run(TestGroup nullableInstance)
             {
-                // set our instance of data
-                // to our parent `g`
+                // set our instance of data to our parent `g`
                 // this is possible as `s` inherits `g`
                 //
                 // we may also be able to set `g.data` directly
