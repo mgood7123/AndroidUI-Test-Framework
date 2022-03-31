@@ -52,6 +52,14 @@ catch (Exception e) {
 ```
 
 if a Test or TestGroup throws an uncaught exception `AndroidUI Test Framework` will catch this and fail the current test or group
+```
+    [Running        ] Test: UNHANDLED_TEST_EXCEPTION
+        UNHANDLED EXCEPTION:
+        System.NullReferenceException: Object reference not set to an instance of an object.
+           at UNHANDLED_TEST_EXCEPTION.Run(TestGroup nullableInstance) in D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:line 239
+           at AndroidUITestFramework.Main.TestGroupInformation.Run(Boolean shortAlphabetically, String PARENT_GROUP) in D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITestFramework\Main.TestGroupInformation.cs:line 230
+    [Running  FAILED] Test: UNHANDLED_TEST_EXCEPTION
+```
 
 # Assertions and Expectations
 
