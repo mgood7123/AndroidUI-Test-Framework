@@ -51,7 +51,7 @@ catch (Exception e) {
 }
 ```
 
-if a Test or TestGroup throws an uncaught exception `AndroidUI Test Framework` will catch this and fail the current test or group
+if a `Test` or `TestGroup` throws an uncaught exception `AndroidUI Test Framework` will catch this and fail the current test or group
 ```
     [Running        ] Test: UNHANDLED_TEST_EXCEPTION
         UNHANDLED EXCEPTION:
