@@ -209,7 +209,7 @@ namespace AndroidUITestFramework
                                 catch (Exception e)
                                 {
                                     group_failed = true;
-                                    Console.WriteLine("UNHANDLED EXCEPTION:\n" + e.ToString());
+                                    PrintUnhandledException(e);
                                 }
                             }
                         }
@@ -240,7 +240,7 @@ namespace AndroidUITestFramework
                             catch (Exception e)
                             {
                                 test_failed = true;
-                                Console.WriteLine("UNHANDLED EXCEPTION:\n" + e.ToString());
+                                PrintUnhandledException(e);
                             }
 
                             if (!test_skipped)
@@ -295,7 +295,7 @@ namespace AndroidUITestFramework
                                 catch (Exception e)
                                 {
                                     group_failed = true;
-                                    Console.WriteLine("UNHANDLED EXCEPTION:\n" + e.ToString());
+                                    PrintUnhandledException(e);
                                 }
                             }
                         }
@@ -341,6 +341,40 @@ namespace AndroidUITestFramework
                 console.popForegroundColor();
                 TEST_TARGET = null;
                 return !group_failed;
+            }
+
+            private void PrintUnhandledException(Exception e)
+            {
+                ConsoleWriter x = new();
+                x.pushForegroundColor(ConsoleColor.Red);
+                Console.WriteLine("UNHANDLED EXCEPTION");
+                x.popForegroundColor();
+                x.pushForegroundColor(ConsoleColor.DarkYellow);
+                Console.WriteLine("Exception Type: " + e.GetType().Name);
+                x.popForegroundColor();
+                x.pushForegroundColor(ConsoleColor.Cyan);
+                Console.WriteLine("Reason: " + e.Message);
+                x.popForegroundColor();
+                x.pushForegroundColor(ConsoleColor.Blue);
+                Console.WriteLine("Location:");
+                System.Diagnostics.StackTrace stackTrace = new(e, true);
+                System.Diagnostics.StackFrame[] frames = stackTrace.GetFrames();
+                foreach (System.Diagnostics.StackFrame frame in frames)
+                {
+                    System.Reflection.MethodBase mb = frame.GetMethod();
+                    if (mb != null)
+                    {
+                        if (mb.DeclaringType.Namespace != "AndroidUITestFramework")
+                        {
+                            Tools.printStackTrace(frame, mb, Console.Out);
+                        }
+                        else
+                        {
+                            break;
+                        }
+                    }
+                }
+                x.popForegroundColor();
             }
         }
     }

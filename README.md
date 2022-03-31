@@ -22,6 +22,8 @@ a C# unit testing framework, based loosely off of GoogleTest
 you cannot see it from the below text, but we emit colored output
 
 ![](Pictures/Screenshot%202022-03-31%20153513.png)
+![](Pictures/Screenshot%202022-03-31%20171523.png)
+![](Pictures/Screenshot%202022-03-31%20174017.png)
 
 # Main Method
 
@@ -54,10 +56,12 @@ catch (Exception e) {
 if a `Test` or `TestGroup` throws an uncaught exception `AndroidUI Test Framework` will catch this and fail the current test or group
 ```
     [Running        ] Test: UNHANDLED_TEST_EXCEPTION
-        UNHANDLED EXCEPTION:
-        System.NullReferenceException: Object reference not set to an instance of an object.
-           at UNHANDLED_TEST_EXCEPTION.Run(TestGroup nullableInstance) in D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:line 239
-           at AndroidUITestFramework.Main.TestGroupInformation.Run(Boolean shortAlphabetically, String PARENT_GROUP) in D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITestFramework\Main.TestGroupInformation.cs:line 230
+        UNHANDLED EXCEPTION
+        Exception Type: NullReferenceException
+        Reason: Object reference not set to an instance of an object.
+        Location:
+           at Method: UNHANDLED_TEST_EXCEPTION.Run(TestGroup nullableInstance)
+             in Location:  D:\IMPORTANT\source\repos\WindowsProject1\AndroidUITest\A_TEST.cs:239
     [Running  FAILED] Test: UNHANDLED_TEST_EXCEPTION
 ```
 

@@ -49,7 +49,7 @@ namespace AndroidUITestFramework
 
     public static class Tools
     {
-        static void printStackTrace(StackFrame sf, MethodBase mb, System.IO.TextWriter writer)
+        internal static void printStackTrace(StackFrame sf, MethodBase mb, System.IO.TextWriter writer)
         {
             bool displayFilenames = true;   // we'll try, but demand may fail
             string word_At = "at";
