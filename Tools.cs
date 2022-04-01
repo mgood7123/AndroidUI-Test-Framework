@@ -77,9 +77,13 @@ namespace AndroidUITestFramework
                     while (k < typars.Length)
                     {
                         if (fFirstTyParam == false)
+                        {
                             writer.Write(",");
+                        }
                         else
+                        {
                             fFirstTyParam = false;
+                        }
 
                         writer.Write(typars[k].Name);
                         k++;
@@ -94,13 +98,20 @@ namespace AndroidUITestFramework
                 for (int j = 0; j < pi.Length; j++)
                 {
                     if (fFirstParam == false)
+                    {
                         writer.Write(", ");
+                    }
                     else
+                    {
                         fFirstParam = false;
+                    }
 
                     string typeName = "<UnknownType>";
                     if (pi[j].ParameterType != null)
+                    {
                         typeName = pi[j].ParameterType.Name;
+                    }
+
                     writer.Write(typeName + " " + pi[j].Name);
                 }
                 writer.Write(")");
@@ -272,9 +283,169 @@ namespace AndroidUITestFramework
             }
         }
 
+        static bool floating_point_type_value_equals<T>(ref object a, ref object b, Func<T, bool> isNaN, Func<T, bool> isInfinity)
+        {
+            T TA = (T)Convert.ChangeType(a, typeof(T));
+            T TB = (T)Convert.ChangeType(b, typeof(T));
+            return isNaN(TA) ? isNaN(TB) : isInfinity(TA) ? isInfinity(TB) : TA.Equals(TB);
+        }
+
+        static bool promote_and_equals<T>(ref object a, ref object b)
+        {
+            if (a is float)
+            {
+                return floating_point_type_value_equals<float>(ref a, ref b, float.IsNaN, float.IsInfinity);
+            }
+            else if (a is double)
+            {
+                return floating_point_type_value_equals<double>(ref a, ref b, double.IsNaN, double.IsInfinity);
+            }
+            else
+            {
+                T TA = (T)Convert.ChangeType(a, typeof(T));
+                T TB = (T)Convert.ChangeType(b, typeof(T));
+                return TA.Equals(TB);
+            }
+        }
+
+        static bool value_type_equals(ref object a, ref object b)
+        {
+            if (a is short)
+            {
+                if (b is short)
+                {
+                    return promote_and_equals<short>(ref a, ref b);
+                }
+                else if (b is int)
+                {
+                    return promote_and_equals<int>(ref a, ref b);
+                }
+                else if (b is long)
+                {
+                    return promote_and_equals<long>(ref a, ref b);
+                }
+                else if (b is float)
+                {
+                    return promote_and_equals<float>(ref a, ref b);
+                }
+                else if (b is double)
+                {
+                    return promote_and_equals<double>(ref a, ref b);
+                }
+                else
+                {
+                    return a.Equals(a);
+                }
+            }
+            else if (a is int)
+            {
+                if (b is short || b is int)
+                {
+                    return promote_and_equals<int>(ref a, ref b);
+                }
+                else if (b is long)
+                {
+                    return promote_and_equals<long>(ref a, ref b);
+                }
+                else if (b is float)
+                {
+                    return promote_and_equals<float>(ref a, ref b);
+                }
+                else if (b is double)
+                {
+                    return promote_and_equals<double>(ref a, ref b);
+                }
+                else
+                {
+                    return a.Equals(a);
+                }
+            }
+            else if (a is long)
+            {
+                if (b is short || b is int || b is long)
+                {
+                    return promote_and_equals<long>(ref a, ref b);
+                }
+                else if (b is float)
+                {
+                    return promote_and_equals<float>(ref a, ref b);
+                }
+                else if (b is double)
+                {
+                    return promote_and_equals<double>(ref a, ref b);
+                }
+                else
+                {
+                    return a.Equals(a);
+                }
+            }
+            else if (a is float)
+            {
+                if (b is short || b is int || b is long || b is float)
+                {
+                    return promote_and_equals<float>(ref a, ref b);
+                }
+                else if (b is double)
+                {
+                    return promote_and_equals<double>(ref a, ref b);
+                }
+                else
+                {
+                    return a.Equals(a);
+                }
+            }
+            else if (a is double)
+            {
+                if (b is short || b is int || b is long || b is float || b is double)
+                {
+                    return promote_and_equals<double>(ref a, ref b);
+                }
+                else
+                {
+                    return a.Equals(a);
+                }
+            }
+            else if (a is char)
+            {
+                if (b is char)
+                {
+                    return promote_and_equals<char>(ref a, ref b);
+                }
+                else if (b is string)
+                {
+                    object tmp = "" + a;
+                    return promote_and_equals<string>(ref tmp, ref b);
+                }
+                else
+                {
+                    return a.Equals(a);
+                }
+            }
+            else if (a is string)
+            {
+                if (b is char)
+                {
+                    object tmp = "" + b;
+                    return promote_and_equals<string>(ref a, ref b);
+                }
+                else if (b is string)
+                {
+                    return promote_and_equals<string>(ref a, ref b);
+                }
+                else
+                {
+                    return a.Equals(a);
+                }
+            }
+            else
+            {
+                return a.Equals(a);
+            }
+        }
+
         public static void ExpectEqual(object value, object expect, string message = null)
         {
-            if (!expect.Equals(value))
+            if (!value_type_equals(ref value, ref expect))
             {
                 PRINT_FAIL(1,
                     "Expected the following values to be equal\n" +
@@ -285,7 +456,7 @@ namespace AndroidUITestFramework
 
         public static void AssertEqual(object value, object expect, string message = null)
         {
-            if (!expect.Equals(value))
+            if (!value_type_equals(ref value, ref expect))
             {
                 PRINT_FAIL(1,
                     "Expected the following values to be equal\n" +
@@ -297,7 +468,7 @@ namespace AndroidUITestFramework
 
         public static void ExpectNotEqual(object value, object expect, string message = null)
         {
-            if (expect.Equals(value))
+            if (value_type_equals(ref value, ref expect))
             {
                 PRINT_FAIL(1,
                     "Expected the following values to be not equal\n" +
@@ -308,7 +479,7 @@ namespace AndroidUITestFramework
 
         public static void AssertNotEqual(object value, object expect, string message = null)
         {
-            if (expect.Equals(value))
+            if (value_type_equals(ref value, ref expect))
             {
                 PRINT_FAIL(1,
                     "Expected the following values to be not equal\n" +
