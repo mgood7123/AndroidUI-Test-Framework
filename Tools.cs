@@ -285,8 +285,8 @@ namespace AndroidUITestFramework
 
         static bool floating_point_type_value_equals<T>(ref object a, ref object b, Func<T, bool> isNaN, Func<T, bool> isInfinity)
         {
-            T TA = (T)Convert.ChangeType(a, typeof(T));
-            T TB = (T)Convert.ChangeType(b, typeof(T));
+            T TA = (T)Convert.ChangeType(a, typeof(T), CultureInfo.InvariantCulture);
+            T TB = (T)Convert.ChangeType(b, typeof(T), CultureInfo.InvariantCulture);
             return isNaN(TA) ? isNaN(TB) : isInfinity(TA) ? isInfinity(TB) : TA.Equals(TB);
         }
 
@@ -302,8 +302,8 @@ namespace AndroidUITestFramework
             }
             else
             {
-                T TA = (T)Convert.ChangeType(a, typeof(T));
-                T TB = (T)Convert.ChangeType(b, typeof(T));
+                T TA = (T)Convert.ChangeType(a, typeof(T), CultureInfo.InvariantCulture);
+                T TB = (T)Convert.ChangeType(b, typeof(T), CultureInfo.InvariantCulture);
                 return TA.Equals(TB);
             }
         }
