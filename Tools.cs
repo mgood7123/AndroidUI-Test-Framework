@@ -190,9 +190,9 @@ namespace AndroidUITestFramework
 
         static void PRINT_FAIL(int offset, string reason, string message)
         {
-            if (AndroidUITestFramework.Main.TestGroupInformation.CURRENT_TEST != null)
+            if (Main.TestGroupInformation.CURRENT_TEST != null)
             {
-                AndroidUITestFramework.Main.TestGroupInformation.CURRENT_TEST.failed = true;
+                Main.TestGroupInformation.CURRENT_TEST.failed = true;
             }
             ConsoleWriter x = new();
             x.pushForegroundColor(ConsoleColor.Red);

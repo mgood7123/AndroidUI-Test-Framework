@@ -194,22 +194,40 @@ namespace AndroidUITestFramework
                             if (type != null)
                             {
                                 testGroupInstance = (TestGroup)Activator.CreateInstance(type);
-                                try
+                                if (System.Diagnostics.Debugger.IsAttached)
                                 {
-                                    testGroupInstance.OnCreate();
+                                    try
+                                    {
+                                        testGroupInstance.OnCreate();
+                                    }
+                                    catch (Exceptions.TEST_FAIL_EXCEPTION)
+                                    {
+                                        group_failed = true;
+                                    }
+                                    catch (Exceptions.TEST_SKIPPED_EXCEPTION)
+                                    {
+                                        group_skipped = true;
+                                    }
                                 }
-                                catch (Exceptions.TEST_FAIL_EXCEPTION)
+                                else
                                 {
-                                    group_failed = true;
-                                }
-                                catch (Exceptions.TEST_SKIPPED_EXCEPTION)
-                                {
-                                    group_skipped = true;
-                                }
-                                catch (Exception e)
-                                {
-                                    group_failed = true;
-                                    PrintUnhandledException(e);
+                                    try
+                                    {
+                                        testGroupInstance.OnCreate();
+                                    }
+                                    catch (Exceptions.TEST_FAIL_EXCEPTION)
+                                    {
+                                        group_failed = true;
+                                    }
+                                    catch (Exceptions.TEST_SKIPPED_EXCEPTION)
+                                    {
+                                        group_skipped = true;
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        group_failed = true;
+                                        PrintUnhandledException(e);
+                                    }
                                 }
                             }
                         }
@@ -225,22 +243,40 @@ namespace AndroidUITestFramework
 
                             bool test_failed = false;
                             bool test_skipped = false;
-                            try
+                            if (System.Diagnostics.Debugger.IsAttached)
                             {
-                                CURRENT_TEST.current.Run(testGroupInstance);
+                                try
+                                {
+                                    CURRENT_TEST.current.Run(testGroupInstance);
+                                }
+                                catch (Exceptions.TEST_FAIL_EXCEPTION)
+                                {
+                                    test_failed = true;
+                                }
+                                catch (Exceptions.TEST_SKIPPED_EXCEPTION)
+                                {
+                                    test_skipped = true;
+                                }
                             }
-                            catch (Exceptions.TEST_FAIL_EXCEPTION)
+                            else
                             {
-                                test_failed = true;
-                            }
-                            catch (Exceptions.TEST_SKIPPED_EXCEPTION)
-                            {
-                                test_skipped = true;
-                            }
-                            catch (Exception e)
-                            {
-                                test_failed = true;
-                                PrintUnhandledException(e);
+                                try
+                                {
+                                    CURRENT_TEST.current.Run(testGroupInstance);
+                                }
+                                catch (Exceptions.TEST_FAIL_EXCEPTION)
+                                {
+                                    test_failed = true;
+                                }
+                                catch (Exceptions.TEST_SKIPPED_EXCEPTION)
+                                {
+                                    test_skipped = true;
+                                }
+                                catch (Exception e)
+                                {
+                                    test_failed = true;
+                                    PrintUnhandledException(e);
+                                }
                             }
 
                             if (!test_skipped)
@@ -281,21 +317,38 @@ namespace AndroidUITestFramework
                         {
                             if (testGroupInstance != null)
                             {
-                                try
+                                if (System.Diagnostics.Debugger.IsAttached)
                                 {
-                                    testGroupInstance.OnDestroy();
+                                    try
+                                    {
+                                        testGroupInstance.OnDestroy();
+                                    }
+                                    catch (Exceptions.TEST_FAIL_EXCEPTION)
+                                    {
+                                        group_failed = true;
+                                    }
+                                    catch (Exceptions.TEST_SKIPPED_EXCEPTION)
+                                    {
+                                    }
                                 }
-                                catch (Exceptions.TEST_FAIL_EXCEPTION)
+                                else
                                 {
-                                    group_failed = true;
-                                }
-                                catch (Exceptions.TEST_SKIPPED_EXCEPTION)
-                                {
-                                }
-                                catch (Exception e)
-                                {
-                                    group_failed = true;
-                                    PrintUnhandledException(e);
+                                    try
+                                    {
+                                        testGroupInstance.OnDestroy();
+                                    }
+                                    catch (Exceptions.TEST_FAIL_EXCEPTION)
+                                    {
+                                        group_failed = true;
+                                    }
+                                    catch (Exceptions.TEST_SKIPPED_EXCEPTION)
+                                    {
+                                    }
+                                    catch (Exception e)
+                                    {
+                                        group_failed = true;
+                                        PrintUnhandledException(e);
+                                    }
                                 }
                             }
                         }

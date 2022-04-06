@@ -31,7 +31,7 @@ namespace AndroidUITestFramework
                 string sb = b.from.NewLine?.Invoke();
                 int NL_B = sb != null ? sb.Length : 0;
 
-                return System.Collections.Generic.Comparer<int>.Default.Compare(NL_A, NL_B);
+                return Comparer<int>.Default.Compare(NL_A, NL_B);
             });
 
         }
