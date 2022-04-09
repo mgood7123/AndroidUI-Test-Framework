@@ -39,7 +39,7 @@ you can run test via `AndroidUITestFramework.Main.Run`
 
 `AndroidUI Test Framework` provides a `RETHROW_EXCEPTION_IF_NEEDED(Exception e)` method to rethrow an exception if it is used internally by `AndroidUI Test Framework`
 
-if you are catching `Exception` you should call this method last
+if you are catching `Exception` you should call this method first
 
 ```cs
 try {
