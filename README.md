@@ -46,9 +46,8 @@ try {
     throwableMethod();
 }
 catch (Exception e) {
-    if (!handle_exception(e)) {
-        RETHROW_EXCEPTION_IF_NEEDED(e);
-    }
+    RETHROW_EXCEPTION_IF_NEEDED(e);
+    handle_exception(e);
 }
 ```
 
@@ -148,6 +147,16 @@ these are located at `AndroidUITestFramework.Tools`
 * > Stops execution of the current Test or TestGroup
 * > can provide an optional message:
 * > > AssertInstanceNotEqual(value, INTERNAL, "somehow managed to obtain an instance of an INTERNAL string")
+* ExpectException&lt;EXCEPTION&gt;(Action method)
+* > fails the current Test or TestGroup if the `Exception` of type `EXCEPTION` was not thrown or a different `Exception` was caught
+* > Continues execution of the current Test or TestGroup if an `Exception` was not thrown, otherwise `rethrows the caught exception`
+* > can provide an optional message:
+* > > ExpectException<FATAL_EXCEPTION>(() => my_method() }, "expected my_method to throw FATAL_EXCEPTION")
+* AssertException&lt;EXCEPTION&gt;(Action method)
+* > fails the current Test or TestGroup if the `Exception` of type `EXCEPTION` was not thrown or a different `Exception` was caught
+* > stops execution of the current Test or TestGroup if an `Exception` was not thrown, otherwise `rethrows the caught exception`
+* > can provide an optional message:
+* > > AssertException<FATAL_EXCEPTION>(() => my_method() }, "expected my_method to throw FATAL_EXCEPTION")
 
 # Tests and TestGroups
 

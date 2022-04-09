@@ -534,5 +534,58 @@ namespace AndroidUITestFramework
                 throw new Exceptions.TEST_FAIL_EXCEPTION();
             }
         }
+
+        public static void ExpectException<EXCEPTION>(Action method, string message = null)
+            where EXCEPTION : Exception
+        {
+            try
+            {
+                method.Invoke();
+            }
+            catch (Exception e)
+            {
+                RETHROW_EXCEPTION_IF_NEEDED(e);
+                if (e.GetType() == typeof(EXCEPTION))
+                {
+                    return;
+                }
+                PRINT_FAIL(1,
+                    "Expected the following Exception to be caught\n" +
+                    ActualExpect(e.GetType().FullName, typeof(EXCEPTION).FullName),
+                    message);
+                throw e;
+            }
+            PRINT_FAIL(1,
+                "Expected the following Exception to be thrown\n" +
+                typeof(EXCEPTION).FullName,
+                message);
+        }
+
+        public static void AssertException<EXCEPTION>(Action method, string message = null)
+            where EXCEPTION : Exception
+        {
+            try
+            {
+                method.Invoke();
+            }
+            catch (Exception e)
+            {
+                RETHROW_EXCEPTION_IF_NEEDED(e);
+                if (e.GetType() == typeof(EXCEPTION))
+                {
+                    return;
+                }
+                PRINT_FAIL(1,
+                    "Expected the following Exception to be caught\n" +
+                    ActualExpect(e.GetType().FullName, typeof(EXCEPTION).FullName),
+                    message);
+                throw e;
+            }
+            PRINT_FAIL(1,
+                "Expected the following Exception to be thrown\n" +
+                typeof(EXCEPTION).FullName,
+                message);
+            throw new Exceptions.TEST_FAIL_EXCEPTION();
+        }
     }
 }
