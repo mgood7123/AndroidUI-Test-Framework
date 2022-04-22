@@ -65,12 +65,15 @@ namespace AndroidUITestFramework
         public override void Flush()
         {
             base.Flush();
-            Clear();
+            _sb.Clear();
         }
 
         public void Clear()
         {
-            _sb.Clear();
+            lock (LOCK)
+            {
+                _sb.Clear();
+            }
         }
 
         public override void Close()
@@ -123,6 +126,8 @@ namespace AndroidUITestFramework
             throw new ObjectDisposedException(null, "Writer Closed");
         }
 
+        private static readonly object LOCK = new object();
+
         // Writes a range of a character array to the underlying string buffer.
         // This method will write count characters of data into this
         // StringWriter from the buffer character array starting at position
@@ -143,7 +148,10 @@ namespace AndroidUITestFramework
             if (!_isOpen)
                 WriterClosed();
 
-            for (int i = index; i < count; i++) Write(buffer[i]);
+            lock (LOCK)
+            {
+                for (int i = index; i < count; i++) Write(buffer[i]);
+            }
         }
 
         // Writes a string to the underlying string buffer. If the given string is
@@ -153,10 +161,13 @@ namespace AndroidUITestFramework
         {
             if (!_isOpen)
                 WriterClosed();
+
             if (value != null)
             {
-                foreach(char c in value)
-                    Write(c);
+                lock (LOCK)
+                {
+                    foreach (char c in value) Write(c);
+                }
             }
         }
 
@@ -225,19 +236,28 @@ namespace AndroidUITestFramework
         //
         public override string ToString()
         {
-            return _sb.ToString();
+            lock (LOCK)
+            {
+                return _sb.ToString();
+            }
         }
 
         public void pushIndent()
         {
-            indentLevel.Push(indentLevel.Peek() + 1);
+            lock (LOCK)
+            {
+                indentLevel.Push(indentLevel.Peek() + 1);
+            }
         }
 
         public void popIndent()
         {
-            if (indentLevel.Count > 1)
+            lock (LOCK)
             {
-                indentLevel.Pop();
+                if (indentLevel.Count > 1)
+                {
+                    indentLevel.Pop();
+                }
             }
         }
 
@@ -248,14 +268,20 @@ namespace AndroidUITestFramework
 
         public void pushIndentSize(int size)
         {
-            indentSize.Push(size);
+            lock (LOCK)
+            {
+                indentSize.Push(size);
+            }
         }
 
         public void popIndentSize()
         {
-            if (indentSize.Count > 1)
+            lock (LOCK)
             {
-                indentSize.Pop();
+                if (indentSize.Count > 1)
+                {
+                    indentSize.Pop();
+                }
             }
         }
 
