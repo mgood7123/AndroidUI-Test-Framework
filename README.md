@@ -437,18 +437,51 @@ here, you prepare your benchmark inside of `prepareBenchmark` using the provided
 
 `MeasureMap` does not provide much documentation which is unfortunate, however examples exist on https://wickedflame.github.io/MeasureMap
 
+logging, if enabled, the current iteration progress of the benchmark
+
+logging can be turned on and off via `runner.Logging`
+
 when this `BenchmarkTest` is ran, you will get the following output
 
+with `Logging` set to `true`
+
 ```
-    [Running        ] Test: BenchTest
-        Iterations: 200
-        ┌────────────┬──────────────────┬───────────┬──────────────────┬─────────┬─────────┬─────────────────┐
-        │ Name       │         Avg Time │ Avg Ticks │            Total │ Fastest │ Slowest │ Memory Increase │
-        ├────────────┼──────────────────┼───────────┼──────────────────┼─────────┼─────────┼─────────────────┤
-        │ Allocation │ 00:00:00.0019236 │     19236 │ 00:00:01.9236424 │    1127 │   99271 │          109160 │
-        │ Random     │ 00:00:00.0002208 │      2208 │ 00:00:00.2208739 │      38 │   39243 │           98776 │
-        └────────────┴──────────────────┴───────────┴──────────────────┴─────────┴─────────┴─────────────────┘
-    [Running      OK] Test: BenchTest
+    [Running        ] Test: native_benchmark
+        [ Thread id: 1 ] : Native allocation: iteration 1 of 1, global iteration 1 of 1
+        [ Thread id: 7 ] : Native allocation MT: iteration 1 of 1, global iteration 1 of 10
+        [ Thread id: 10 ] : Native allocation MT: iteration 1 of 1, global iteration 2 of 10
+        [ Thread id: 7 ] : Native allocation MT: iteration 1 of 1, global iteration 3 of 10
+        [ Thread id: 4 ] : Native allocation MT: iteration 1 of 1, global iteration 4 of 10
+        [ Thread id: 10 ] : Native allocation MT: iteration 1 of 1, global iteration 5 of 10
+        [ Thread id: 4 ] : Native allocation MT: iteration 1 of 1, global iteration 6 of 10
+        [ Thread id: 7 ] : Native allocation MT: iteration 1 of 1, global iteration 7 of 10
+        [ Thread id: 11 ] : Native allocation MT: iteration 1 of 1, global iteration 8 of 10
+        [ Thread id: 4 ] : Native allocation MT: iteration 1 of 1, global iteration 9 of 10
+        [ Thread id: 10 ] : Native allocation MT: iteration 1 of 1, global iteration 10 of 10
+        Iterations: 1
+        ┌──────────────────────┬─────────┬──────────────────┬───────┬──────────────────┬─────────┬─────────┬─────────────┐
+        │ Name                 │ Threads │              Avg │   Avg │            Total │ Fastest │ Slowest │       Total │
+        │                      │         │             Time │ Ticks │                  │         │         │ Used Memory │
+        ├──────────────────────┼─────────┼──────────────────┼───────┼──────────────────┼─────────┼─────────┼─────────────┤
+        │ Native allocation    │       1 │ 00:00:00.0000346 │   346 │ 00:00:00.0000346 │     346 │     346 │        8168 │
+        │ Native allocation MT │      10 │ 00:00:00.0000285 │   285 │ 00:00:00.0002853 │     262 │     397 │        6064 │
+        └──────────────────────┴─────────┴──────────────────┴───────┴──────────────────┴─────────┴─────────┴─────────────┘
+    [Running      OK] Test: native_benchmark
+```
+
+with `Logging` set to `false`
+
+```
+    [Running        ] Test: native_benchmark
+        Iterations: 1
+        ┌──────────────────────┬─────────┬──────────────────┬───────┬──────────────────┬─────────┬─────────┬─────────────┐
+        │ Name                 │ Threads │              Avg │   Avg │            Total │ Fastest │ Slowest │       Total │
+        │                      │         │             Time │ Ticks │                  │         │         │ Used Memory │
+        ├──────────────────────┼─────────┼──────────────────┼───────┼──────────────────┼─────────┼─────────┼─────────────┤
+        │ Native allocation    │       1 │ 00:00:00.0000346 │   346 │ 00:00:00.0000346 │     346 │     346 │        8168 │
+        │ Native allocation MT │      10 │ 00:00:00.0000285 │   285 │ 00:00:00.0002853 │     262 │     397 │        6064 │
+        └──────────────────────┴─────────┴──────────────────┴───────┴──────────────────┴─────────┴─────────┴─────────────┘
+    [Running      OK] Test: native_benchmark
 ```
 
 the above table is drawn using the powerful `Spectre.Console` library
