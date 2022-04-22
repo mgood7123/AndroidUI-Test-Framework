@@ -402,32 +402,37 @@ since the `BenchmarkTest` runs as a `Test`, it is isolated in the same way a nor
 a simple benchmark might look like this
 
 ```cs
-class BenchTest : BenchmarkTest
+class native_benchmark : BenchmarkTest
 {
-    public override void prepareBenchmark(BenchmarkRunner runner)
-    {
-        runner.SetIterations(200);
+public override void prepareBenchmark(BenchmarkRunner runner)
+{
+    runner.SetIterations(1);
+    runner.Logging = true;
 
-        runner.AddSession("Allocation",
-            ProfilerSession.StartSession()
-                .Task(() =>
-                {
-                    byte[] data = new byte[10000];
-                    new Random(42).NextBytes(data);
-                })
-                .SetThreads(5)
-        );
-
-        runner.AddSession("Random",
-            ProfilerSession.StartSession()
-                .Task(() =>
-                {
-                    double v = new Random(42).NextDouble();
-                    v.CompareTo(new Random().NextDouble());
-                })
-                .SetThreads(5)
-        );
-    }
+    runner.AddSession("Native allocation",
+        ProfilerSession.StartSession()
+            .Task(() =>
+            {
+                var sk2f = AndroidUI.Native.Sk2f.Load(new float[] { 1, 2 });
+                Tools.ExpectEqual(sk2f[0], 1);
+                Tools.ExpectEqual(sk2f[1], 2);
+                sk2f *= sk2f;
+                Tools.ExpectEqual(sk2f[0], 1);
+                Tools.ExpectEqual(sk2f[1], 4);
+            })
+    );
+    runner.AddSession("Native allocation MT",
+        ProfilerSession.StartSession()
+            .Task(() =>
+            {
+                var sk2f = AndroidUI.Native.Sk2f.Load(new float[] { 1, 2 });
+                Tools.ExpectEqual(sk2f[0], 1);
+                Tools.ExpectEqual(sk2f[1], 2);
+                sk2f *= sk2f;
+                Tools.ExpectEqual(sk2f[0], 1);
+                Tools.ExpectEqual(sk2f[1], 4);
+            }).SetThreads(10)
+    );
 }
 ```
 
