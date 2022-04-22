@@ -442,7 +442,7 @@ here, you prepare your benchmark inside of `prepareBenchmark` using the provided
 
 `MeasureMap` does not provide much documentation which is unfortunate, however examples exist on https://wickedflame.github.io/MeasureMap
 
-logging, if enabled, the current iteration progress of the benchmark
+logging, if enabled, will display the current iteration progress of the benchmark
 
 logging can be turned on and off via `runner.Logging`
 
