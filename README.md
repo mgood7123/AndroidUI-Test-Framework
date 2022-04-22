@@ -11,6 +11,7 @@ a C# unit testing framework, based loosely off of GoogleTest
 - [Tests and TestGroups](#tests-and-testgroups)
 - [Nesting](#nesting)
 - [Test inheritence](#test-inheritence)
+- [Benchmarking](#benchmarking)
 - [why this framework?](#why-this-framework)
   - [NUnit](#nunit)
   - [MSTest](#mstest)
@@ -332,47 +333,127 @@ output:
 
 likewise a `TestGroup` can also inherit a `TestGroup`
 
-in most cases it will work fine provided:
-* the test is part of the same test tree and groups inherit from parent group
+in most cases it will work fine, as documented by the following example
 
 example
 ```cs
-class g : TestGroup 
+class g : TestGroup
 {
     int data;
     class s : g
     {
-        class Data : Test
+        internal class Data : Test
         {
-            g data;
+            internal g data;
             public override void Run(TestGroup nullableInstance)
             {
                 // set our instance of data to our parent `g`
-                // this is possible as `s` inherits `g`
+                // this will work as long `nullableInstance` is
+                // an instance of a TestGroup that inherits `g`
+                // or is `g` itself
                 //
                 // we may also be able to set `g.data` directly
+                // eg, data = ((g)nullableInstance).data
                 // but this will COPY if `g.data` is a VALUE TYPE
+                // which it currently is `int data`
+                // `int` is a VALUE TYPE
                 data = (g)nullableInstance;
             }
         }
-        class n : g
+    }
+    class n
+    {
+        class test : s.Data
         {
-            class test : Data
+            public override void Run(TestGroup nullableInstance)
             {
-                public override void Run(TestGroup nullableInstance)
-                {
-                    // this works because `n` inherits `g`
-                    // which `Data` expects to recieve as its instance
-                    base.Run(nullableInstance);
-                    // we can quickly access `data` which is of type `g`
-                    data.data = 5;
-                }
+                // this works because we recieve `g` itself
+                // due to nested test finding
+
+                // `Data` expects to recieve an instance of `g`
+                base.Run(nullableInstance);
+
+                // we can quickly access `data` which is of type `g`
+                data.data = 5;
             }
         }
     }
 }
+```
+
+# benchmarking
+
+AndroidUI Test Framework now includes a Benchmarking library `MeasureMap`
+https://github.com/WickedFlame/MeasureMap
+
+as well as `Spectre.Console`
+https://github.com/spectreconsole/spectre.console
+
+`Spectre.Console` is used to output the benchmark data in a clean formatted table
+
+`BenchmarkDotNet` is unsuitible for our use since it is not known how to get it to avoid compiling a temporary project and attempting to replace the currently running executable (which is us!)
+
+therefore `MeasureMap` was choses as the benchmark library for integrated benchmark unit testing
+
+a `BenchmarkTest` is simply a wrapper over `Test` that manages the execution of the `MeasureMap` benchmarking library
+
+since the `BenchmarkTest` runs as a `Test`, it is isolated in the same way a normal `Test` is
+
+a simple benchmark might look like this
+
+```cs
+class BenchTest : BenchmarkTest
+{
+    public override void prepareBenchmark(BenchmarkRunner runner)
+    {
+        runner.SetIterations(200);
+
+        runner.AddSession("Allocation",
+            ProfilerSession.StartSession()
+                .Task(() =>
+                {
+                    byte[] data = new byte[10000];
+                    new Random(42).NextBytes(data);
+                })
+                .SetThreads(5)
+        );
+
+        runner.AddSession("Random",
+            ProfilerSession.StartSession()
+                .Task(() =>
+                {
+                    double v = new Random(42).NextDouble();
+                    v.CompareTo(new Random().NextDouble());
+                })
+                .SetThreads(5)
+        );
+    }
+}
+```
+
+the above example does not do much but is sufficent for demonstration
+
+here, you prepare your benchmark inside of `prepareBenchmark` using the provided `runner`
+
+`MeasureMap` does not provide much documentation which is unfortunate, however examples exist on https://wickedflame.github.io/MeasureMap
+
+when this `BenchmarkTest` is ran, you will get the following output
 
 ```
+    [Running        ] Test: BenchTest
+        Iterations: 200
+        ┌────────────┬──────────────────┬───────────┬──────────────────┬─────────┬─────────┬─────────────────┐
+        │ Name       │         Avg Time │ Avg Ticks │            Total │ Fastest │ Slowest │ Memory Increase │
+        ├────────────┼──────────────────┼───────────┼──────────────────┼─────────┼─────────┼─────────────────┤
+        │ Allocation │ 00:00:00.0019236 │     19236 │ 00:00:01.9236424 │    1127 │   99271 │          109160 │
+        │ Random     │ 00:00:00.0002208 │      2208 │ 00:00:00.2208739 │      38 │   39243 │           98776 │
+        └────────────┴──────────────────┴───────────┴──────────────────┴─────────┴─────────┴─────────────────┘
+    [Running      OK] Test: BenchTest
+```
+
+the above table is drawn using the powerful `Spectre.Console` library
+
+the output of the `BenchmarkTest` is subject to change if it can better reflect benchtest data
 
 # why this framework?
 
