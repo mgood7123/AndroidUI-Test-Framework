@@ -383,7 +383,7 @@ class g : TestGroup
 
 # benchmarking
 
-AndroidUI Test Framework now includes a Benchmarking library `MeasureMap`
+`AndroidUI Test Framework` now includes a Benchmarking library `MeasureMap`
 https://github.com/WickedFlame/MeasureMap
 
 as well as `Spectre.Console`
