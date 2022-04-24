@@ -34,6 +34,26 @@ namespace AndroidUITestFramework
 
         NewLineConverter newLineConverter;
 
+        static bool IO_LOCKED = true;
+        private static readonly object LOCK = new object();
+        private static readonly object IO_LOCK = new object();
+
+        public static void UnlockIO()
+        {
+            lock (IO_LOCK)
+            {
+                IO_LOCKED = false;
+            }
+        }
+
+        public static void LockIO()
+        {
+            lock (IO_LOCK)
+            {
+                IO_LOCKED = true;
+            }
+        }
+
         bool flushed;
 
         public StringWriter()
@@ -89,6 +109,20 @@ namespace AndroidUITestFramework
             base.Dispose(disposing);
         }
 
+        private void indent()
+        {
+            flushed = false;
+            int indentLevel = this.indentLevel.Peek();
+            int indentSize = this.indentSize.Peek();
+            for (int i = 0; i < indentLevel; i++)
+            {
+                for (int _ = 0; _ < indentSize; _++)
+                {
+                    _sb.Append(' ');
+                }
+            }
+        }
+
         // Writes a character to the underlying string buffer.
         //
         public override void Write(char value)
@@ -96,20 +130,12 @@ namespace AndroidUITestFramework
             if (!_isOpen)
                 WriterClosed();
 
-            if (flushed)
-            {
-                flushed = false;
-                int indentLevel = this.indentLevel.Peek();
-                int indentSize = this.indentSize.Peek();
-                for (int i = 0; i < indentLevel; i++)
-                {
-                    for (int _ = 0; _ < indentSize; _++)
-                    {
-                        _sb.Append(' ');
-                    }
-                }
-            }
+            if (flushed) indent();
             (string str, bool isNewLine) = newLineConverter.processNext(value);
+
+            // flush if newLineConverter flushes before us
+            if (flushed) indent();
+            
             if (str != null)
             {
                 _sb.Append(str);
@@ -125,8 +151,6 @@ namespace AndroidUITestFramework
         {
             throw new ObjectDisposedException(null, "Writer Closed");
         }
-
-        private static readonly object LOCK = new object();
 
         // Writes a range of a character array to the underlying string buffer.
         // This method will write count characters of data into this
@@ -148,7 +172,20 @@ namespace AndroidUITestFramework
             if (!_isOpen)
                 WriterClosed();
 
-            lock (LOCK)
+            bool locked = false;
+            lock (IO_LOCK)
+            {
+                locked = IO_LOCKED;
+            }
+
+            if (locked)
+            {
+                lock (LOCK)
+                {
+                    for (int i = index; i < count; i++) Write(buffer[i]);
+                }
+            }
+            else
             {
                 for (int i = index; i < count; i++) Write(buffer[i]);
             }
@@ -162,12 +199,22 @@ namespace AndroidUITestFramework
             if (!_isOpen)
                 WriterClosed();
 
-            if (value != null)
+            bool locked = false;
+            lock (IO_LOCK)
+            {
+                locked = IO_LOCKED;
+            }
+
+            if (locked)
             {
                 lock (LOCK)
                 {
                     foreach (char c in value) Write(c);
                 }
+            }
+            else
+            {
+                foreach (char c in value) Write(c);
             }
         }
 
