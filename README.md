@@ -442,54 +442,43 @@ here, you prepare your benchmark inside of `prepareBenchmark` using the provided
 
 `MeasureMap` does not provide much documentation which is unfortunate, however examples exist on https://wickedflame.github.io/MeasureMap
 
-logging, if enabled, will display the current iteration progress of the benchmark
+`MeasureMap` integrated logging (powered by `Spectre.Console`) provides information about currently running benchmark sessions
 
-logging can be turned on and off via `runner.Logging`
+when the following `BenchmarkTest` is ran
 
-when this `BenchmarkTest` is ran, you will get the following output
-
-with `Logging` set to `true`
-
+```cs
+runner.AddSession("Native allocation",
+    ProfilerSession.StartSession()
+        .Task(() =>
+        {
+            var sk2f = AndroidUI.Native.Sk2f.Load(new float[] { 1, 2 });
+            Tools.ExpectEqual(sk2f[0], 1);
+            Tools.ExpectEqual(sk2f[1], 2);
+            sk2f *= sk2f;
+            Tools.ExpectEqual(sk2f[0], 1);
+            Tools.ExpectEqual(sk2f[1], 4);
+        }).SetIterations(8000)
+);
+runner.AddSession("Native allocation MT",
+    ProfilerSession.StartSession()
+        .Task(() =>
+        {
+            var sk2f = AndroidUI.Native.Sk2f.Load(new float[] { 1, 2 });
+            Tools.ExpectEqual(sk2f[0], 1);
+            Tools.ExpectEqual(sk2f[1], 2);
+            sk2f *= sk2f;
+            Tools.ExpectEqual(sk2f[0], 1);
+            Tools.ExpectEqual(sk2f[1], 4);
+        }).SetThreads(6).SetDuration(TimeSpan.FromSeconds(4))
+);
 ```
-    [Running        ] Test: native_benchmark
-        [ Thread id: 1 ] : Native allocation: iteration 1 of 1, global iteration 1 of 1
-        [ Thread id: 7 ] : Native allocation MT: iteration 1 of 1, global iteration 1 of 10
-        [ Thread id: 10 ] : Native allocation MT: iteration 1 of 1, global iteration 2 of 10
-        [ Thread id: 7 ] : Native allocation MT: iteration 1 of 1, global iteration 3 of 10
-        [ Thread id: 4 ] : Native allocation MT: iteration 1 of 1, global iteration 4 of 10
-        [ Thread id: 10 ] : Native allocation MT: iteration 1 of 1, global iteration 5 of 10
-        [ Thread id: 4 ] : Native allocation MT: iteration 1 of 1, global iteration 6 of 10
-        [ Thread id: 7 ] : Native allocation MT: iteration 1 of 1, global iteration 7 of 10
-        [ Thread id: 11 ] : Native allocation MT: iteration 1 of 1, global iteration 8 of 10
-        [ Thread id: 4 ] : Native allocation MT: iteration 1 of 1, global iteration 9 of 10
-        [ Thread id: 10 ] : Native allocation MT: iteration 1 of 1, global iteration 10 of 10
-        Iterations: 1
-        ┌──────────────────────┬─────────┬──────────────────┬───────┬──────────────────┬─────────┬─────────┬─────────────┐
-        │ Name                 │ Threads │              Avg │   Avg │            Total │ Fastest │ Slowest │       Total │
-        │                      │         │             Time │ Ticks │                  │         │         │ Used Memory │
-        ├──────────────────────┼─────────┼──────────────────┼───────┼──────────────────┼─────────┼─────────┼─────────────┤
-        │ Native allocation    │       1 │ 00:00:00.0000346 │   346 │ 00:00:00.0000346 │     346 │     346 │        8168 │
-        │ Native allocation MT │      10 │ 00:00:00.0000285 │   285 │ 00:00:00.0002853 │     262 │     397 │        6064 │
-        └──────────────────────┴─────────┴──────────────────┴───────┴──────────────────┴─────────┴─────────┴─────────────┘
-    [Running      OK] Test: native_benchmark
-```
+you will get the following output
 
-with `Logging` set to `false`
+![](Pictures/unknown.png)
 
-```
-    [Running        ] Test: native_benchmark
-        Iterations: 1
-        ┌──────────────────────┬─────────┬──────────────────┬───────┬──────────────────┬─────────┬─────────┬─────────────┐
-        │ Name                 │ Threads │              Avg │   Avg │            Total │ Fastest │ Slowest │       Total │
-        │                      │         │             Time │ Ticks │                  │         │         │ Used Memory │
-        ├──────────────────────┼─────────┼──────────────────┼───────┼──────────────────┼─────────┼─────────┼─────────────┤
-        │ Native allocation    │       1 │ 00:00:00.0000346 │   346 │ 00:00:00.0000346 │     346 │     346 │        8168 │
-        │ Native allocation MT │      10 │ 00:00:00.0000285 │   285 │ 00:00:00.0002853 │     262 │     397 │        6064 │
-        └──────────────────────┴─────────┴──────────────────┴───────┴──────────────────┴─────────┴─────────┴─────────────┘
-    [Running      OK] Test: native_benchmark
-```
+![](Pictures/unknown1.png)
 
-the above table is drawn using the powerful `Spectre.Console` library
+the above progress bars and table are drawn using the powerful `Spectre.Console` library
 
 the output of the `BenchmarkTest` is subject to change if it can better reflect benchtest data
 

@@ -10,7 +10,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="MeasureMap" Version="1.7.0" />
     <PackageReference Include="Spectre.Console" Version="0.44.0" />
   </ItemGroup>
 
