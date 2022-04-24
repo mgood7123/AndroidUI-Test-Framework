@@ -39,11 +39,18 @@ namespace AndroidUITestFramework
             }
         }
 
+        bool flushing_input = false;
 
         public (string str, bool isNewLine) processNext(char c)
         {
             lock (LOCK)
             {
+                if (flushing_input)
+                {
+                    // prevent recursion
+                    flushing_input = false;
+                    return ("" + c, c == '\r');
+                }
                 if (conversions.Count == 0)
                 {
                     // we have no available conversions
@@ -178,6 +185,7 @@ namespace AndroidUITestFramework
                         {
                             // we still have input in the buffer
                             // flush our input to text writer
+                            flushing_input = true;
                             textWriter.Write(saved);
 
                             // set our input to the first character
