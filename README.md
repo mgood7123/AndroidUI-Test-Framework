@@ -393,46 +393,53 @@ https://github.com/spectreconsole/spectre.console
 
 `BenchmarkDotNet` is unsuitible for our use since it is not known how to get it to avoid compiling a temporary project and attempting to replace the currently running executable (which is us!)
 
-therefore `MeasureMap` was choses as the benchmark library for integrated benchmark unit testing
+`MeasureMap` was our previous benchmarking library, however it was very slow when combined with a progress bar
 
-a `BenchmarkTest` is simply a wrapper over `Test` that manages the execution of the `MeasureMap` benchmarking library
+therefore `XMarkTest` was created as the fast benchmark library for integrated benchmark unit testing
 
-since the `BenchmarkTest` runs as a `Test`, it is isolated in the same way a normal `Test` is
+`XMarkTest` is simple a wrapper over `Test` that manages the execution of the `XSession` and `XManager` benchmarking classes
+
+(`NOTE:` the contents of `MeasureMap` are kept as a reference but will be removed in a future build)
+
+since the `XMarkTest` runs as a `Test`, it is isolated in the same way a normal `Test` is
 
 a simple benchmark might look like this
 
 ```cs
-class native_benchmark : BenchmarkTest
+class native_benchmark : XMarkTest
 {
-public override void prepareBenchmark(BenchmarkRunner runner)
-{
-    runner.SetIterations(1);
-    runner.Logging = true;
+    protected override void prepareBenchmark(XManager runner)
+    {
+        var m = Int32.MaxValue / 4;
+        runner.AddSession(
+            new XSession(
+                m + " Nothings",
+                () =>
+                {
+                    for (var i = m - m; i < m; i++) { }
+                }
+            )
+        );
 
-    runner.AddSession("Native allocation",
-        ProfilerSession.StartSession()
-            .Task(() =>
-            {
-                var sk2f = AndroidUI.Native.Sk2f.Load(new float[] { 1, 2 });
-                Tools.ExpectEqual(sk2f[0], 1);
-                Tools.ExpectEqual(sk2f[1], 2);
-                sk2f *= sk2f;
-                Tools.ExpectEqual(sk2f[0], 1);
-                Tools.ExpectEqual(sk2f[1], 4);
-            })
-    );
-    runner.AddSession("Native allocation MT",
-        ProfilerSession.StartSession()
-            .Task(() =>
-            {
-                var sk2f = AndroidUI.Native.Sk2f.Load(new float[] { 1, 2 });
-                Tools.ExpectEqual(sk2f[0], 1);
-                Tools.ExpectEqual(sk2f[1], 2);
-                sk2f *= sk2f;
-                Tools.ExpectEqual(sk2f[0], 1);
-                Tools.ExpectEqual(sk2f[1], 4);
-            }).SetThreads(10)
-    );
+        runner.AddSession(new XSession(m + " iterations of Nothing", () => { }, m));
+
+        void al()
+        {
+            var sk2f = AndroidUI.Native.Sk2f.Load(new float[] { 1, 2 });
+            Tools.ExpectEqual(sk2f[0], 1);
+            Tools.ExpectEqual(sk2f[1], 2);
+            sk2f *= sk2f;
+            Tools.ExpectEqual(sk2f[0], 1);
+            Tools.ExpectEqual(sk2f[1], 4);
+        }
+
+        runner.AddSession(new XSession("Native allocation", al, 80));
+        runner.AddSession(new XSession(
+            "Native allocation MT",
+            al,
+            TimeSpan.FromSeconds(30).Ticks / 100 / 2 / 2 / 2/2, 10
+        ));
+    }
 }
 ```
 
@@ -440,39 +447,9 @@ the above example does not do much but is sufficent for demonstration
 
 here, you prepare your benchmark inside of `prepareBenchmark` using the provided `runner`
 
-`MeasureMap` does not provide much documentation which is unfortunate, however examples exist on https://wickedflame.github.io/MeasureMap
+`XManager` contains integrated logging (powered by `Spectre.Console`) to provide information about currently running benchmark sessions
 
-`MeasureMap` integrated logging (powered by `Spectre.Console`) provides information about currently running benchmark sessions
-
-when the following `BenchmarkTest` is ran
-
-```cs
-runner.AddSession("Native allocation",
-    ProfilerSession.StartSession()
-        .Task(() =>
-        {
-            var sk2f = AndroidUI.Native.Sk2f.Load(new float[] { 1, 2 });
-            Tools.ExpectEqual(sk2f[0], 1);
-            Tools.ExpectEqual(sk2f[1], 2);
-            sk2f *= sk2f;
-            Tools.ExpectEqual(sk2f[0], 1);
-            Tools.ExpectEqual(sk2f[1], 4);
-        }).SetIterations(8000)
-);
-runner.AddSession("Native allocation MT",
-    ProfilerSession.StartSession()
-        .Task(() =>
-        {
-            var sk2f = AndroidUI.Native.Sk2f.Load(new float[] { 1, 2 });
-            Tools.ExpectEqual(sk2f[0], 1);
-            Tools.ExpectEqual(sk2f[1], 2);
-            sk2f *= sk2f;
-            Tools.ExpectEqual(sk2f[0], 1);
-            Tools.ExpectEqual(sk2f[1], 4);
-        }).SetThreads(6).SetDuration(TimeSpan.FromSeconds(4))
-);
-```
-you will get the following output
+upon running the above benchmark example, you will get the following output
 
 ![](Pictures/unknown.png)
 
@@ -480,7 +457,7 @@ you will get the following output
 
 the above progress bars and table are drawn using the powerful `Spectre.Console` library
 
-the output of the `BenchmarkTest` is subject to change if it can better reflect benchtest data
+the output of the `XMarkTest` is subject to change if it can better reflect `benchmark data`
 
 # why this framework?
 
