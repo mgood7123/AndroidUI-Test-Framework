@@ -133,7 +133,7 @@ namespace AndroidUITestFramework
                         return found;
                     }
                 }
-                return this;
+                return null;
             }
 
             public bool Run(bool shortAlphabetically = false, string PARENT_GROUP = null)
