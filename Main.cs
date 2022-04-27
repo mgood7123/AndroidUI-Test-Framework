@@ -122,17 +122,53 @@ namespace AndroidUITestFramework
             Console.WriteLine("Started AndroidUI Test Framework\n");
 
             Console.WriteLine("Discovering Tests...");
-            TestGroupInformation root = DiscoverTests().Filter(namespace_).Find(type);
+            var tests = DiscoverTests();
+            if (tests == null)
+            {
+                Console.WriteLine("No tests found");
+                return false;
+            }
+            var ns = tests.Filter(namespace_);
+            if (ns == null)
+            {
+                if (namespace_ == null)
+                {
+                    Console.WriteLine("No tests found");
+                    return false;
+                }
+                Console.WriteLine("No tests found in namespace '" + namespace_ + "'");
+                return false;
+            }
+            TestGroupInformation root = ns.Find(type);
+            if (root == null)
+            {
+                if (type == null)
+                {
+                    Console.WriteLine("No tests found");
+                    return false;
+                }
+                if (namespace_ == null)
+                {
+                    Console.WriteLine("No tests found for type '" + type.Name + "'");
+                    return false;
+                }
+                Console.WriteLine("No test of type '" + type.Name + "' found in namespace '" + namespace_ + "'");
+                return false;
+            }
             Console.WriteLine("Discovered Tests\n");
 
             Console.WriteLine("Printing Tests Heirarchy");
-            root.PrintTests(new ConsoleWriter());
+            root?.PrintTests(new ConsoleWriter());
             Console.WriteLine("Printed Tests Heirarchy\n");
 
-            Console.WriteLine("Running Tests in Alphaberical Order...");
-            bool r = root.Run(true);
-            Console.WriteLine("Ran Tests in Alphaberical Order");
-            return r;
+            if (root != null)
+            {
+                Console.WriteLine("Running Tests in Alphaberical Order...");
+                bool r = root.Run(true);
+                Console.WriteLine("Ran Tests in Alphaberical Order");
+                return r;
+            }
+            else return false;
         }
     }
 }
