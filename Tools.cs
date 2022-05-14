@@ -310,17 +310,21 @@ namespace AndroidUITestFramework
 
         static bool value_type_equals(ref object a, ref object b)
         {
-            if (a is short)
+            if (a is sbyte || a is byte)
             {
-                if (b is short)
+                if (a is sbyte || a is byte)
+                {
+                    return promote_and_equals<sbyte>(ref a, ref b);
+                }
+                else if (b is short || b is ushort)
                 {
                     return promote_and_equals<short>(ref a, ref b);
                 }
-                else if (b is int)
+                else if (b is int || b is uint)
                 {
                     return promote_and_equals<int>(ref a, ref b);
                 }
-                else if (b is long)
+                else if (b is long || b is ulong)
                 {
                     return promote_and_equals<long>(ref a, ref b);
                 }
@@ -337,13 +341,17 @@ namespace AndroidUITestFramework
                     return a.Equals(a);
                 }
             }
-            else if (a is int)
+            else if (a is short || a is ushort)
             {
-                if (b is short || b is int)
+                if (b is sbyte || b is byte || b is short || b is ushort)
+                {
+                    return promote_and_equals<short>(ref a, ref b);
+                }
+                else if (b is int || b is uint)
                 {
                     return promote_and_equals<int>(ref a, ref b);
                 }
-                else if (b is long)
+                else if (b is long || b is ulong)
                 {
                     return promote_and_equals<long>(ref a, ref b);
                 }
@@ -360,9 +368,32 @@ namespace AndroidUITestFramework
                     return a.Equals(a);
                 }
             }
-            else if (a is long)
+            else if (a is int || a is uint)
             {
-                if (b is short || b is int || b is long)
+                if (b is sbyte || b is byte || b is short || b is ushort || b is int || b is uint)
+                {
+                    return promote_and_equals<int>(ref a, ref b);
+                }
+                else if (b is long || b is ulong)
+                {
+                    return promote_and_equals<long>(ref a, ref b);
+                }
+                else if (b is float)
+                {
+                    return promote_and_equals<float>(ref a, ref b);
+                }
+                else if (b is double)
+                {
+                    return promote_and_equals<double>(ref a, ref b);
+                }
+                else
+                {
+                    return a.Equals(a);
+                }
+            }
+            else if (a is long || a is ulong)
+            {
+                if (b is sbyte || b is byte || b is short || b is ushort || b is int || b is uint || b is long || b is ulong)
                 {
                     return promote_and_equals<long>(ref a, ref b);
                 }
