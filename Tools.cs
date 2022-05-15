@@ -283,22 +283,22 @@ namespace AndroidUITestFramework
             }
         }
 
-        static bool floating_point_type_value_equals<T>(ref object a, ref object b, Func<T, bool> isNaN, Func<T, bool> isInfinity)
+        static bool floating_point_type_value_equals<T>(object a, object b, Func<T, bool> isNaN, Func<T, bool> isInfinity)
         {
             T TA = (T)Convert.ChangeType(a, typeof(T), CultureInfo.InvariantCulture);
             T TB = (T)Convert.ChangeType(b, typeof(T), CultureInfo.InvariantCulture);
             return isNaN(TA) ? isNaN(TB) : isInfinity(TA) ? isInfinity(TB) : TA.Equals(TB);
         }
 
-        static bool promote_and_equals<T>(ref object a, ref object b)
+        static bool promote_and_equals<T>(object a, object b)
         {
             if (a is float)
             {
-                return floating_point_type_value_equals<float>(ref a, ref b, float.IsNaN, float.IsInfinity);
+                return floating_point_type_value_equals<float>(a, b, float.IsNaN, float.IsInfinity);
             }
             else if (a is double)
             {
-                return floating_point_type_value_equals<double>(ref a, ref b, double.IsNaN, double.IsInfinity);
+                return floating_point_type_value_equals<double>(a, b, double.IsNaN, double.IsInfinity);
             }
             else
             {
@@ -308,33 +308,38 @@ namespace AndroidUITestFramework
             }
         }
 
-        static bool value_type_equals(ref object a, ref object b)
+        static bool value_type_equals(object a, object b)
         {
+            if (a == null || b == null)
+            {
+                return a == b;
+            }
+
             if (a is sbyte || a is byte)
             {
                 if (a is sbyte || a is byte)
                 {
-                    return promote_and_equals<sbyte>(ref a, ref b);
+                    return promote_and_equals<sbyte>(a, b);
                 }
                 else if (b is short || b is ushort)
                 {
-                    return promote_and_equals<short>(ref a, ref b);
+                    return promote_and_equals<short>(a, b);
                 }
                 else if (b is int || b is uint)
                 {
-                    return promote_and_equals<int>(ref a, ref b);
+                    return promote_and_equals<int>(a, b);
                 }
                 else if (b is long || b is ulong)
                 {
-                    return promote_and_equals<long>(ref a, ref b);
+                    return promote_and_equals<long>(a, b);
                 }
                 else if (b is float)
                 {
-                    return promote_and_equals<float>(ref a, ref b);
+                    return promote_and_equals<float>(a, b);
                 }
                 else if (b is double)
                 {
-                    return promote_and_equals<double>(ref a, ref b);
+                    return promote_and_equals<double>(a, b);
                 }
                 else
                 {
@@ -345,23 +350,23 @@ namespace AndroidUITestFramework
             {
                 if (b is sbyte || b is byte || b is short || b is ushort)
                 {
-                    return promote_and_equals<short>(ref a, ref b);
+                    return promote_and_equals<short>(a, b);
                 }
                 else if (b is int || b is uint)
                 {
-                    return promote_and_equals<int>(ref a, ref b);
+                    return promote_and_equals<int>(a, b);
                 }
                 else if (b is long || b is ulong)
                 {
-                    return promote_and_equals<long>(ref a, ref b);
+                    return promote_and_equals<long>(a, b);
                 }
                 else if (b is float)
                 {
-                    return promote_and_equals<float>(ref a, ref b);
+                    return promote_and_equals<float>(a, b);
                 }
                 else if (b is double)
                 {
-                    return promote_and_equals<double>(ref a, ref b);
+                    return promote_and_equals<double>(a, b);
                 }
                 else
                 {
@@ -372,19 +377,19 @@ namespace AndroidUITestFramework
             {
                 if (b is sbyte || b is byte || b is short || b is ushort || b is int || b is uint)
                 {
-                    return promote_and_equals<int>(ref a, ref b);
+                    return promote_and_equals<int>(a, b);
                 }
                 else if (b is long || b is ulong)
                 {
-                    return promote_and_equals<long>(ref a, ref b);
+                    return promote_and_equals<long>(a, b);
                 }
                 else if (b is float)
                 {
-                    return promote_and_equals<float>(ref a, ref b);
+                    return promote_and_equals<float>(a, b);
                 }
                 else if (b is double)
                 {
-                    return promote_and_equals<double>(ref a, ref b);
+                    return promote_and_equals<double>(a, b);
                 }
                 else
                 {
@@ -395,15 +400,15 @@ namespace AndroidUITestFramework
             {
                 if (b is sbyte || b is byte || b is short || b is ushort || b is int || b is uint || b is long || b is ulong)
                 {
-                    return promote_and_equals<long>(ref a, ref b);
+                    return promote_and_equals<long>(a, b);
                 }
                 else if (b is float)
                 {
-                    return promote_and_equals<float>(ref a, ref b);
+                    return promote_and_equals<float>(a, b);
                 }
                 else if (b is double)
                 {
-                    return promote_and_equals<double>(ref a, ref b);
+                    return promote_and_equals<double>(a, b);
                 }
                 else
                 {
@@ -414,11 +419,11 @@ namespace AndroidUITestFramework
             {
                 if (b is short || b is int || b is long || b is float)
                 {
-                    return promote_and_equals<float>(ref a, ref b);
+                    return promote_and_equals<float>(a, b);
                 }
                 else if (b is double)
                 {
-                    return promote_and_equals<double>(ref a, ref b);
+                    return promote_and_equals<double>(a, b);
                 }
                 else
                 {
@@ -429,7 +434,7 @@ namespace AndroidUITestFramework
             {
                 if (b is short || b is int || b is long || b is float || b is double)
                 {
-                    return promote_and_equals<double>(ref a, ref b);
+                    return promote_and_equals<double>(a, b);
                 }
                 else
                 {
@@ -440,12 +445,12 @@ namespace AndroidUITestFramework
             {
                 if (b is char)
                 {
-                    return promote_and_equals<char>(ref a, ref b);
+                    return promote_and_equals<char>(a, b);
                 }
                 else if (b is string)
                 {
                     string s = (string)b;
-                    return s.Length == 1 && s[0].Equals(a);
+                    return s.Length == 1 && s[0] == (char)a;
                 }
                 else
                 {
@@ -457,11 +462,11 @@ namespace AndroidUITestFramework
                 if (b is char)
                 {
                     string s = (string)a;
-                    return s.Length == 1 && s[0].Equals(b);
+                    return s.Length == 1 && s[0] == (char)b;
                 }
                 else if (b is string)
                 {
-                    return promote_and_equals<string>(ref a, ref b);
+                    return promote_and_equals<string>(a, b);
                 }
                 else
                 {
@@ -476,7 +481,7 @@ namespace AndroidUITestFramework
 
         public static void ExpectEqual(object value, object expect, string message = null)
         {
-            if (!value_type_equals(ref value, ref expect))
+            if (!value_type_equals(value, expect))
             {
                 PRINT_FAIL(1,
                     "Expected the following values to be equal\n" +
@@ -487,7 +492,7 @@ namespace AndroidUITestFramework
 
         public static void AssertEqual(object value, object expect, string message = null)
         {
-            if (!value_type_equals(ref value, ref expect))
+            if (!value_type_equals(value, expect))
             {
                 PRINT_FAIL(1,
                     "Expected the following values to be equal\n" +
@@ -499,7 +504,7 @@ namespace AndroidUITestFramework
 
         public static void ExpectNotEqual(object value, object expect, string message = null)
         {
-            if (value_type_equals(ref value, ref expect))
+            if (value_type_equals(value, expect))
             {
                 PRINT_FAIL(1,
                     "Expected the following values to be not equal\n" +
@@ -510,7 +515,7 @@ namespace AndroidUITestFramework
 
         public static void AssertNotEqual(object value, object expect, string message = null)
         {
-            if (value_type_equals(ref value, ref expect))
+            if (value_type_equals(value, expect))
             {
                 PRINT_FAIL(1,
                     "Expected the following values to be not equal\n" +
