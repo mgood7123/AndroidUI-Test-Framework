@@ -444,8 +444,10 @@ namespace AndroidUITestFramework
                 }
                 else if (b is string)
                 {
-                    object tmp = "" + a;
-                    return promote_and_equals<string>(ref tmp, ref b);
+                    string s = (string)b;
+                    if (s.Length != 1) return false;
+                    string tmp = "" + a;
+                    return tmp.Equals(s);
                 }
                 else
                 {
@@ -456,8 +458,10 @@ namespace AndroidUITestFramework
             {
                 if (b is char)
                 {
-                    object tmp = "" + b;
-                    return promote_and_equals<string>(ref a, ref b);
+                    string s = (string)a;
+                    if (s.Length != 1) return false;
+                    string tmp = "" + b;
+                    return s.Equals(tmp);
                 }
                 else if (b is string)
                 {
