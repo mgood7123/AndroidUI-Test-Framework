@@ -445,7 +445,7 @@ namespace AndroidUITestFramework
                 else if (b is string)
                 {
                     string s = (string)b;
-                    return s.Length != 1 && s[0].Equals(a);
+                    return s.Length == 1 && s[0].Equals(a);
                 }
                 else
                 {
@@ -457,7 +457,7 @@ namespace AndroidUITestFramework
                 if (b is char)
                 {
                     string s = (string)a;
-                    return s.Length != 1 && s[0].Equals(b);
+                    return s.Length == 1 && s[0].Equals(b);
                 }
                 else if (b is string)
                 {
