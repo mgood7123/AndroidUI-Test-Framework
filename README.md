@@ -150,14 +150,24 @@ these are located at `AndroidUITestFramework.Tools`
 * > > AssertInstanceNotEqual(value, INTERNAL, "somehow managed to obtain an instance of an INTERNAL string")
 * ExpectException&lt;EXCEPTION&gt;(Action method)
 * > fails the current Test or TestGroup if the `Exception` of type `EXCEPTION` was not thrown or a different `Exception` was caught
-* > Continues execution of the current Test or TestGroup if an `Exception` was not thrown, otherwise `rethrows the caught exception`
+* > Continues execution of the current Test or TestGroup
 * > can provide an optional message:
 * > > ExpectException<FATAL_EXCEPTION>(() => my_method() }, "expected my_method to throw FATAL_EXCEPTION")
 * AssertException&lt;EXCEPTION&gt;(Action method)
 * > fails the current Test or TestGroup if the `Exception` of type `EXCEPTION` was not thrown or a different `Exception` was caught
-* > stops execution of the current Test or TestGroup if an `Exception` was not thrown, otherwise `rethrows the caught exception`
+* > Stops execution of the current Test or TestGroup
 * > can provide an optional message:
 * > > AssertException<FATAL_EXCEPTION>(() => my_method() }, "expected my_method to throw FATAL_EXCEPTION")
+* ExpectNoException(Action method)
+* > fails the current Test or TestGroup if any `Exception` was thrown
+* > Continues execution of the current Test or TestGroup
+* > can provide an optional message:
+* > > ExpectNoException(() => my_method() }, "my_method thrown an exception")
+* AssertNoException(Action method)
+* > fails the current Test or TestGroup if any `Exception` was thrown
+* > Stops execution of the current Test or TestGroup
+* > can provide an optional message:
+* > > AssertNoException(() => my_method() }, "my_method thrown an exception")
 
 # Tests and TestGroups
 

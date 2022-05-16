@@ -10,16 +10,55 @@ namespace AndroidUITestFramework
     {
         internal class TEST_FAIL_EXCEPTION : Exception
         {
+            public Exception reason;
+            public StackTrace stack;
             public TEST_FAIL_EXCEPTION()
             {
+            }
+
+            public TEST_FAIL_EXCEPTION(StackTrace stack)
+            {
+                this.stack = stack;
             }
 
             public TEST_FAIL_EXCEPTION(string message) : base(message)
             {
             }
 
+            public TEST_FAIL_EXCEPTION(string message, StackTrace stack) : base(message)
+            {
+                this.stack = stack;
+            }
+
+            public TEST_FAIL_EXCEPTION(Exception reason, string message) : base(message)
+            {
+                this.reason = reason;
+            }
+
+            public TEST_FAIL_EXCEPTION(Exception reason, string message, StackTrace stack) : base(message)
+            {
+                this.reason = reason;
+                this.stack = stack;
+            }
+
             public TEST_FAIL_EXCEPTION(string message, Exception innerException) : base(message, innerException)
             {
+            }
+
+            public TEST_FAIL_EXCEPTION(string message, Exception innerException, StackTrace stack) : base(message, innerException)
+            {
+                this.stack = stack;
+            }
+
+            public TEST_FAIL_EXCEPTION(Exception reason, string message, Exception innerException) : base(message, innerException)
+            {
+                this.reason = reason;
+            }
+
+            public TEST_FAIL_EXCEPTION(Exception reason, string message, Exception innerException, StackTrace stack) : base(message, innerException)
+            {
+                this.reason = reason;
+                this.stack = stack;
             }
 
             protected TEST_FAIL_EXCEPTION(SerializationInfo info, StreamingContext context) : base(info, context)
@@ -49,7 +88,7 @@ namespace AndroidUITestFramework
 
     public static class Tools
     {
-        internal static void printStackTrace(StackFrame sf, MethodBase mb, System.IO.TextWriter writer)
+        internal static void PrintStackTrace(StackFrame sf, MethodBase mb, System.IO.TextWriter writer)
         {
             bool displayFilenames = true;   // we'll try, but demand may fail
             string word_At = "at";
@@ -167,18 +206,22 @@ namespace AndroidUITestFramework
             writer.Write(Environment.NewLine);
         }
 
-        static void printStackTrace(int offset, System.IO.TextWriter writer)
+        static void PrintStackTrace(int offset, System.IO.TextWriter writer)
         {
-            StackTrace stackTrace = new StackTrace(offset + 2, true);
+            PrintStackTrace(new StackTrace(offset + 2, true), writer);
+        }
+
+        static void PrintStackTrace(StackTrace stackTrace, System.IO.TextWriter writer)
+        {
             StackFrame[] frames = stackTrace.GetFrames();
-            foreach(StackFrame frame in frames)
+            foreach (StackFrame frame in frames)
             {
                 MethodBase mb = frame.GetMethod();
                 if (mb != null)
                 {
                     if (mb.DeclaringType.Namespace != "AndroidUITestFramework")
                     {
-                        printStackTrace(frame, mb, writer);
+                        PrintStackTrace(frame, mb, writer);
                     }
                     else
                     {
@@ -186,6 +229,11 @@ namespace AndroidUITestFramework
                     }
                 }
             }
+        }
+
+        public static void PrintLocation(Exception e)
+        {
+            PrintStackTrace(new StackTrace(e, true), Console.Out);
         }
 
         static void PRINT_FAIL(int offset, string reason, string message)
@@ -206,7 +254,77 @@ namespace AndroidUITestFramework
             x.popForegroundColor();
             x.pushForegroundColor(ConsoleColor.Blue);
             Console.WriteLine("Location:");
-            printStackTrace(offset, Console.Out);
+            PrintStackTrace(offset, Console.Out);
+            x.popForegroundColor();
+        }
+
+        static void PRINT_FAIL(int offset, Exception reason, string message)
+        {
+            if (Main.TestGroupInformation.CURRENT_TEST != null)
+            {
+                Main.TestGroupInformation.CURRENT_TEST.failed = true;
+            }
+            ConsoleWriter x = new();
+            x.pushForegroundColor(ConsoleColor.Red);
+            Console.WriteLine("Test Failed");
+            x.popForegroundColor();
+            x.pushForegroundColor(ConsoleColor.DarkYellow);
+            if (reason == null)
+            {
+                Console.WriteLine("Reason: <No Reason Given>");
+            }
+            else
+            {
+                Console.WriteLine("Reason: " + reason.GetType().FullName + ": " + reason.Message);
+                x.pushIndent();
+                x.pushForegroundColor(ConsoleColor.Blue);
+                Console.WriteLine("Location:");
+                PrintLocation(reason);
+                x.popForegroundColor();
+                x.popIndent();
+            }
+            x.popForegroundColor();
+            x.pushForegroundColor(ConsoleColor.Cyan);
+            Console.WriteLine("Message: " + (message ?? "<No Message Given>"));
+            x.popForegroundColor();
+            x.pushForegroundColor(ConsoleColor.Blue);
+            Console.WriteLine("Location:");
+            PrintStackTrace(offset, Console.Out);
+            x.popForegroundColor();
+        }
+
+        internal static void PrintTestFailedException(Exceptions.TEST_FAIL_EXCEPTION e)
+        {
+            if (Main.TestGroupInformation.CURRENT_TEST != null)
+            {
+                Main.TestGroupInformation.CURRENT_TEST.failed = true;
+            }
+            ConsoleWriter x = new();
+            x.pushForegroundColor(ConsoleColor.Red);
+            Console.WriteLine("Test Failed");
+            x.popForegroundColor();
+            x.pushForegroundColor(ConsoleColor.DarkYellow);
+            if (e.reason == null)
+            {
+                Console.WriteLine("Reason: <No Reason Given>");
+            }
+            else
+            {
+                Console.WriteLine("Reason: " + e.reason.GetType().FullName + ": " + e.reason.Message);
+                x.pushIndent();
+                x.pushForegroundColor(ConsoleColor.Blue);
+                Console.WriteLine("Location:");
+                PrintLocation(e.reason);
+                x.popForegroundColor();
+                x.popIndent();
+            }
+            x.popForegroundColor();
+            x.pushForegroundColor(ConsoleColor.Cyan);
+            Console.WriteLine("Message: " + (e.Message ?? "<No Message Given>"));
+            x.popForegroundColor();
+            x.pushForegroundColor(ConsoleColor.Blue);
+            Console.WriteLine("Location:");
+            PrintStackTrace(e.stack, Console.Out);
             x.popForegroundColor();
         }
 
@@ -236,7 +354,7 @@ namespace AndroidUITestFramework
         }
 
         public static void FAIL(string message = null) {
-            PRINT_FAIL(1, null, message);
+            PRINT_FAIL(1, (string)null, message);
             throw new Exceptions.TEST_FAIL_EXCEPTION();
         }
 
@@ -589,7 +707,7 @@ namespace AndroidUITestFramework
                     "Expected the following Exception to be caught\n" +
                     ActualExpect(e.GetType().FullName, typeof(EXCEPTION).FullName),
                     message);
-                throw e;
+                throw;
             }
             PRINT_FAIL(1,
                 "Expected the following Exception to be thrown\n" +
@@ -615,13 +733,40 @@ namespace AndroidUITestFramework
                     "Expected the following Exception to be caught\n" +
                     ActualExpect(e.GetType().FullName, typeof(EXCEPTION).FullName),
                     message);
-                throw e;
+                throw;
             }
             PRINT_FAIL(1,
                 "Expected the following Exception to be thrown\n" +
                 typeof(EXCEPTION).FullName,
                 message);
             throw new Exceptions.TEST_FAIL_EXCEPTION();
+        }
+
+        public static void ExpectNoException(Action method, string message = null)
+        {
+            try
+            {
+                method.Invoke();
+            }
+            catch (Exception e)
+            {
+                RETHROW_EXCEPTION_IF_NEEDED(e);
+
+                PRINT_FAIL(1, e, message);
+            }
+        }
+
+        public static void AssertNoException(Action method, string message = null)
+        {
+            try
+            {
+                method.Invoke();
+            }
+            catch (Exception e)
+            {
+                RETHROW_EXCEPTION_IF_NEEDED(e);
+                throw new Exceptions.TEST_FAIL_EXCEPTION(e, message, new StackTrace(1, true));
+            }
         }
     }
 }

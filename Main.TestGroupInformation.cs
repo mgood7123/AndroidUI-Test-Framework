@@ -200,8 +200,9 @@ namespace AndroidUITestFramework
                                     {
                                         testGroupInstance.OnCreate();
                                     }
-                                    catch (Exceptions.TEST_FAIL_EXCEPTION)
+                                    catch (Exceptions.TEST_FAIL_EXCEPTION e)
                                     {
+                                        Tools.PrintTestFailedException(e);
                                         group_failed = true;
                                     }
                                     catch (Exceptions.TEST_SKIPPED_EXCEPTION)
@@ -215,8 +216,9 @@ namespace AndroidUITestFramework
                                     {
                                         testGroupInstance.OnCreate();
                                     }
-                                    catch (Exceptions.TEST_FAIL_EXCEPTION)
+                                    catch (Exceptions.TEST_FAIL_EXCEPTION e)
                                     {
+                                        Tools.PrintTestFailedException(e);
                                         group_failed = true;
                                     }
                                     catch (Exceptions.TEST_SKIPPED_EXCEPTION)
@@ -258,8 +260,9 @@ namespace AndroidUITestFramework
                                 {
                                     CURRENT_TEST.current.Run(testGroupInstance);
                                 }
-                                catch (Exceptions.TEST_FAIL_EXCEPTION)
+                                catch (Exceptions.TEST_FAIL_EXCEPTION e)
                                 {
+                                    Tools.PrintTestFailedException(e);
                                     test_failed = true;
                                 }
                                 catch (Exceptions.TEST_SKIPPED_EXCEPTION)
@@ -273,8 +276,9 @@ namespace AndroidUITestFramework
                                 {
                                     CURRENT_TEST.current.Run(testGroupInstance);
                                 }
-                                catch (Exceptions.TEST_FAIL_EXCEPTION)
+                                catch (Exceptions.TEST_FAIL_EXCEPTION e)
                                 {
+                                    Tools.PrintTestFailedException(e);
                                     test_failed = true;
                                 }
                                 catch (Exceptions.TEST_SKIPPED_EXCEPTION)
@@ -341,8 +345,9 @@ namespace AndroidUITestFramework
                                     {
                                         testGroupInstance.OnDestroy();
                                     }
-                                    catch (Exceptions.TEST_FAIL_EXCEPTION)
+                                    catch (Exceptions.TEST_FAIL_EXCEPTION e)
                                     {
+                                        Tools.PrintTestFailedException(e);
                                         group_failed = true;
                                     }
                                     catch (Exceptions.TEST_SKIPPED_EXCEPTION)
@@ -355,8 +360,9 @@ namespace AndroidUITestFramework
                                     {
                                         testGroupInstance.OnDestroy();
                                     }
-                                    catch (Exceptions.TEST_FAIL_EXCEPTION)
+                                    catch (Exceptions.TEST_FAIL_EXCEPTION e)
                                     {
+                                        Tools.PrintTestFailedException(e);
                                         group_failed = true;
                                     }
                                     catch (Exceptions.TEST_SKIPPED_EXCEPTION)
@@ -430,30 +436,14 @@ namespace AndroidUITestFramework
                 Console.WriteLine("UNHANDLED AGGREGATED EXCEPTION (Number: " + i + " of " + m + ")");
                 x.popForegroundColor();
                 x.pushForegroundColor(ConsoleColor.DarkYellow);
-                Console.WriteLine("Exception Type: " + e.GetType().Name);
+                Console.WriteLine("Exception Type: " + e.GetType().FullName);
                 x.popForegroundColor();
                 x.pushForegroundColor(ConsoleColor.Cyan);
                 Console.WriteLine("Reason: " + e.Message);
                 x.popForegroundColor();
                 x.pushForegroundColor(ConsoleColor.Blue);
                 Console.WriteLine("Location:");
-                System.Diagnostics.StackTrace stackTrace = new(e, true);
-                System.Diagnostics.StackFrame[] frames = stackTrace.GetFrames();
-                foreach (System.Diagnostics.StackFrame frame in frames)
-                {
-                    System.Reflection.MethodBase mb = frame.GetMethod();
-                    if (mb != null)
-                    {
-                        if (mb.DeclaringType.Namespace != "AndroidUITestFramework")
-                        {
-                            Tools.printStackTrace(frame, mb, Console.Out);
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                }
+                Tools.PrintLocation(e);
                 x.popForegroundColor();
             }
 
@@ -464,30 +454,14 @@ namespace AndroidUITestFramework
                 Console.WriteLine("UNHANDLED EXCEPTION");
                 x.popForegroundColor();
                 x.pushForegroundColor(ConsoleColor.DarkYellow);
-                Console.WriteLine("Exception Type: " + e.GetType().Name);
+                Console.WriteLine("Exception Type: " + e.GetType().FullName);
                 x.popForegroundColor();
                 x.pushForegroundColor(ConsoleColor.Cyan);
                 Console.WriteLine("Reason: " + e.Message);
                 x.popForegroundColor();
                 x.pushForegroundColor(ConsoleColor.Blue);
                 Console.WriteLine("Location:");
-                System.Diagnostics.StackTrace stackTrace = new(e, true);
-                System.Diagnostics.StackFrame[] frames = stackTrace.GetFrames();
-                foreach (System.Diagnostics.StackFrame frame in frames)
-                {
-                    System.Reflection.MethodBase mb = frame.GetMethod();
-                    if (mb != null)
-                    {
-                        if (mb.DeclaringType.Namespace != "AndroidUITestFramework")
-                        {
-                            Tools.printStackTrace(frame, mb, Console.Out);
-                        }
-                        else
-                        {
-                            break;
-                        }
-                    }
-                }
+                Tools.PrintLocation(e);
                 x.popForegroundColor();
             }
         }
