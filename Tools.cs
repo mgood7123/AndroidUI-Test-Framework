@@ -507,7 +507,7 @@ namespace AndroidUITestFramework
                 }
                 else
                 {
-                    return a.Equals(a);
+                    return a.Equals(b);
                 }
             }
             else if (a is short || a is ushort)
@@ -534,7 +534,7 @@ namespace AndroidUITestFramework
                 }
                 else
                 {
-                    return a.Equals(a);
+                    return a.Equals(b);
                 }
             }
             else if (a is int || a is uint)
@@ -557,7 +557,7 @@ namespace AndroidUITestFramework
                 }
                 else
                 {
-                    return a.Equals(a);
+                    return a.Equals(b);
                 }
             }
             else if (a is long || a is ulong)
@@ -576,7 +576,7 @@ namespace AndroidUITestFramework
                 }
                 else
                 {
-                    return a.Equals(a);
+                    return a.Equals(b);
                 }
             }
             else if (a is float)
@@ -591,7 +591,7 @@ namespace AndroidUITestFramework
                 }
                 else
                 {
-                    return a.Equals(a);
+                    return a.Equals(b);
                 }
             }
             else if (a is double)
@@ -602,7 +602,7 @@ namespace AndroidUITestFramework
                 }
                 else
                 {
-                    return a.Equals(a);
+                    return a.Equals(b);
                 }
             }
             else if (a is char)
@@ -618,7 +618,7 @@ namespace AndroidUITestFramework
                 }
                 else
                 {
-                    return a.Equals(a);
+                    return a.Equals(b);
                 }
             }
             else if (a is string)
@@ -634,12 +634,12 @@ namespace AndroidUITestFramework
                 }
                 else
                 {
-                    return a.Equals(a);
+                    return a.Equals(b);
                 }
             }
             else
             {
-                return a.Equals(a);
+                return a.Equals(b);
             }
         }
 
