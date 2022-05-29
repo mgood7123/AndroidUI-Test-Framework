@@ -416,22 +416,20 @@ namespace AndroidUITestFramework
             if (float.IsNaN(a) && double.IsNaN(b)) return true;
             bool binf = double.IsInfinity(b);
             if (float.IsInfinity(a) && binf) return true;
-            double da;
+            double da = (double)a; // float -> double should never fail
             double db;
             // try to downcast b to float
-            float f = (float)Convert.ChangeType(b, FLOAT_T, CultureInfo.InvariantCulture);
+            float f = (float)b;
             if (float.IsInfinity(f))
             {
                 if (binf) return true;
                 // b downcast was infinity
                 // try to upcast a float to a double
-                da = (double)Convert.ChangeType(a, DOUBLE_T, CultureInfo.InvariantCulture);
-                db = (double)Convert.ChangeType(b, DOUBLE_T, CultureInfo.InvariantCulture);
+                db = (double)b;
             }
             else
             {
-                da = (double)Convert.ChangeType(a, DOUBLE_T, CultureInfo.InvariantCulture);
-                db = (double)Convert.ChangeType(f, DOUBLE_T, CultureInfo.InvariantCulture);
+                db = (double)f;
             }
             return da.Equals(db);
         }
@@ -441,31 +439,88 @@ namespace AndroidUITestFramework
             // special case, float vs double comparison
             Type ta = a.GetType();
             Type tb = b.GetType();
-            if (ta == FLOAT_T && tb == DOUBLE_T)
-            {
-                float TA = (float)Convert.ChangeType(a, FLOAT_T, CultureInfo.InvariantCulture);
-                double TB = (double)Convert.ChangeType(b, DOUBLE_T, CultureInfo.InvariantCulture);
-                return compare_float_double(TA, TB);
-            }
-            else if (tb == FLOAT_T && ta == DOUBLE_T)
-            {
-                float TA = (float)Convert.ChangeType(b, FLOAT_T, CultureInfo.InvariantCulture);
-                double TB = (double)Convert.ChangeType(a, DOUBLE_T, CultureInfo.InvariantCulture);
-                return compare_float_double(TA, TB);
-            }
-
             Type t = typeof(T);
-            if (t == FLOAT_T)
+            bool ta_f = ta == FLOAT_T;
+            bool ta_d = ta == DOUBLE_T;
+            bool tb_f = tb == FLOAT_T;
+            bool tb_d = tb == DOUBLE_T;
+            bool t_f = t == FLOAT_T;
+            bool t_d = t == DOUBLE_T;
+            float f1;
+            float f2;
+            double d1;
+            double d2;
+            if (ta_f)
+            {
+                if (tb_f)
+                {
+                    f1 = (float)a;
+                    f2 = (float)b;
+                    return float.IsNaN(f1) ? float.IsNaN(f2) : float.IsInfinity(f1) ? float.IsInfinity(f2) : f1.Equals(f2);
+                }
+                else if (tb_d)
+                {
+                    f1 = (float)a;
+                    d1 = (double)b;
+                    return compare_float_double(f1, d1);
+                }
+            }
+            else if (ta_d)
+            {
+                if (tb_d)
+                {
+                    d1 = (double)a;
+                    d2 = (double)b;
+                    return double.IsNaN(d1) ? double.IsNaN(d2) : double.IsInfinity(d1) ? double.IsInfinity(d2) : d1.Equals(d2);
+                }
+                else if (tb_f)
+                {
+                    f1 = (float)b;
+                    d1 = (double)a;
+                    return compare_float_double(f1, d1);
+                }
+            }
+            else if (tb_f)
+            {
+                if (ta_f)
+                {
+                    f1 = (float)a;
+                    f2 = (float)b;
+                    return float.IsNaN(f1) ? float.IsNaN(f2) : float.IsInfinity(f1) ? float.IsInfinity(f2) : f1.Equals(f2);
+                }
+                else if (ta_d)
+                {
+                    f1 = (float)b;
+                    d1 = (double)a;
+                    return compare_float_double(f1, d1);
+                }
+            }
+            else if (tb_d)
+            {
+                if (ta_d)
+                {
+                    d1 = (double)a;
+                    d2 = (double)b;
+                    return double.IsNaN(d1) ? double.IsNaN(d2) : double.IsInfinity(d1) ? double.IsInfinity(d2) : d1.Equals(d2);
+                }
+                else if (ta_f)
+                {
+                    f1 = (float)a;
+                    d1 = (double)b;
+                    return compare_float_double(f1, d1);
+                }
+            }
+            if (t_f)
             {
                 return floating_point_type_value_equals<float>(a, b, float.IsNaN, float.IsInfinity);
             }
-            else if (t == DOUBLE_T)
+            else if (t_d)
             {
                 return floating_point_type_value_equals<double>(a, b, double.IsNaN, double.IsInfinity);
             }
             else
             {
-                // we should not get here but incase we do try to compare anyway
+                // we are not float nor double
                 T TA = (T)Convert.ChangeType(a, typeof(T), CultureInfo.InvariantCulture);
                 T TB = (T)Convert.ChangeType(b, typeof(T), CultureInfo.InvariantCulture);
                 return TA.Equals(TB);
