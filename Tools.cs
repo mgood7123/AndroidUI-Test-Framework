@@ -408,18 +408,64 @@ namespace AndroidUITestFramework
             return isNaN(TA) ? isNaN(TB) : isInfinity(TA) ? isInfinity(TB) : TA.Equals(TB);
         }
 
+        static Type FLOAT_T = typeof(float);
+        static Type DOUBLE_T = typeof(double);
+
+        static bool compare_float_double(float a, double b)
+        {
+            if (float.IsNaN(a) && double.IsNaN(b)) return true;
+            bool binf = double.IsInfinity(b);
+            if (float.IsInfinity(a) && binf) return true;
+            double da;
+            double db;
+            // try to downcast b to float
+            float f = (float)Convert.ChangeType(b, FLOAT_T, CultureInfo.InvariantCulture);
+            if (float.IsInfinity(f))
+            {
+                if (binf) return true;
+                // b downcast was infinity
+                // try to upcast a float to a double
+                da = (double)Convert.ChangeType(a, DOUBLE_T, CultureInfo.InvariantCulture);
+                db = (double)Convert.ChangeType(b, DOUBLE_T, CultureInfo.InvariantCulture);
+            }
+            else
+            {
+                da = (double)Convert.ChangeType(a, DOUBLE_T, CultureInfo.InvariantCulture);
+                db = (double)Convert.ChangeType(f, DOUBLE_T, CultureInfo.InvariantCulture);
+            }
+            return da.Equals(db);
+        }
+
         static bool promote_and_equals<T>(object a, object b)
         {
-            if (a is float)
+            // special case, float vs double comparison
+            Type ta = a.GetType();
+            Type tb = b.GetType();
+            if (ta == FLOAT_T && tb == DOUBLE_T)
+            {
+                float TA = (float)Convert.ChangeType(a, FLOAT_T, CultureInfo.InvariantCulture);
+                double TB = (double)Convert.ChangeType(b, DOUBLE_T, CultureInfo.InvariantCulture);
+                return compare_float_double(TA, TB);
+            }
+            else if (tb == FLOAT_T && ta == DOUBLE_T)
+            {
+                float TA = (float)Convert.ChangeType(b, FLOAT_T, CultureInfo.InvariantCulture);
+                double TB = (double)Convert.ChangeType(a, DOUBLE_T, CultureInfo.InvariantCulture);
+                return compare_float_double(TA, TB);
+            }
+
+            Type t = typeof(T);
+            if (t == FLOAT_T)
             {
                 return floating_point_type_value_equals<float>(a, b, float.IsNaN, float.IsInfinity);
             }
-            else if (a is double)
+            else if (t == DOUBLE_T)
             {
                 return floating_point_type_value_equals<double>(a, b, double.IsNaN, double.IsInfinity);
             }
             else
             {
+                // we should not get here but incase we do try to compare anyway
                 T TA = (T)Convert.ChangeType(a, typeof(T), CultureInfo.InvariantCulture);
                 T TB = (T)Convert.ChangeType(b, typeof(T), CultureInfo.InvariantCulture);
                 return TA.Equals(TB);
