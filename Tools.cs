@@ -413,23 +413,39 @@ namespace AndroidUITestFramework
 
         static bool compare_float_double(float a, double b)
         {
+            //Console.WriteLine("a: (float) " + a);
+            //Console.WriteLine("b: (double) " + b);
             if (float.IsNaN(a) && double.IsNaN(b)) return true;
             bool binf = double.IsInfinity(b);
             if (float.IsInfinity(a) && binf) return true;
+            //Console.WriteLine("upcast float to double (a -> da)");
             double da = (double)a; // float -> double should never fail
+            //Console.WriteLine("da: (double) " + da);
             double db;
-            // try to downcast b to float
+            //Console.WriteLine("try to downcast b to float");
             float f = (float)b;
+            //Console.WriteLine("f: (float) " + f);
             if (float.IsInfinity(f))
             {
                 if (binf) return true;
-                // b downcast was infinity
-                // try to upcast a float to a double
-                db = (double)b;
+                //Console.WriteLine("f was infinity");
+                //Console.WriteLine("use upcasted float (a -> da)");
+                db = b;
+                //Console.WriteLine("db: (double) " + db);
             }
             else
             {
+                //Console.WriteLine("f was not infinity");
+                //Console.WriteLine("upcast float to double (f -> db)");
                 db = (double)f;
+                //Console.WriteLine("db: (double) " + db);
+                //Console.WriteLine("test for bitwise equality against (a -> da) and (b -> f -> db)");
+                if (BitConverter.DoubleToUInt64Bits(da) != BitConverter.DoubleToUInt64Bits(db))
+                {
+                    //Console.WriteLine("(a -> da) and (b -> f -> db) are not bitwise exact");
+                    return false;
+                }
+                //Console.WriteLine("(a -> da) and (b -> f -> db) are bitwise exact");
             }
             return da.Equals(db);
         }
