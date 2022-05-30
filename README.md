@@ -103,28 +103,28 @@ these are located at `AndroidUITestFramework.Tools`
 * ExpectEqual(object value, object expect)
 * > fails the current Test or TestGroup if the result of `expect.Equals(value)` returns false
 * > Continues execution of the current Test or TestGroup
-* > Does automatic type promotion of short, int, long, float, double
+* > Does automatic type promotion of (s)byte, (u)short, (u)int, (u)long, float, double
 * > Does automatic conversion of char to string
 * > can provide an optional message:
 * > > ExpectEqual(str, str2, "the given strings do not match")
 * AssertEqual(object value, object expect)
 * > fails the current Test or TestGroup if the result of `expect.Equals(value)` returns false
 * > Stops execution of the current Test or TestGroup
-* > Does automatic type promotion of short, int, long, float, double
+* > Does automatic type promotion of (s)byte, (u)short, (u)int, (u)long, float, double
 * > Does automatic conversion of char to string
 * > can provide an optional message:
 * > > AssertEqual(str, str2, "the given strings do not match")
 * ExpectNotEqual(object value, object expect)
 * > fails the current Test or TestGroup if the result of `expect.Equals(value)` returns true
 * > Continues execution of the current Test or TestGroup
-* > Does automatic type promotion of short, int, long, float, double
+* > Does automatic type promotion of (s)byte, (u)short, (u)int, (u)long, float, double
 * > Does automatic conversion of char to string
 * > can provide an optional message:
 * > > ExpectNotEqual(str, INTERNAL, "the given string cannot have the same name as an INTERNAL string")
 * AssertNotEqual(object value, object expect)
 * > fails the current Test or TestGroup if the result of `expect.Equals(value)` returns true
 * > Stops execution of the current Test or TestGroup
-* > Does automatic type promotion of short, int, long, float, double
+* > Does automatic type promotion of (s)byte, (u)short, (u)int, (u)long, float, double
 * > Does automatic conversion of char to string
 * > can provide an optional message:
 * > > AssertNotEqual(str, INTERNAL, "the given string cannot have the same name as an INTERNAL string")
