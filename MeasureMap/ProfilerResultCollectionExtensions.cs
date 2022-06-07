@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace MeasureMap
+﻿namespace MeasureMap
 {
     /// <summary>
     /// Extension methods for the IProfilerResultCollection

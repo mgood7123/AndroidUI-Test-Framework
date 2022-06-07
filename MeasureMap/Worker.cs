@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Diagnostics;
-using System.Threading;
 using MeasureMap.Diagnostics;
-using MeasureMap.Runners;
 
 namespace MeasureMap
 {

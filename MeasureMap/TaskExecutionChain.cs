@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace MeasureMap
+﻿namespace MeasureMap
 {
     /// <summary>
     /// Chain of responnsibility Manager for executing tasks
