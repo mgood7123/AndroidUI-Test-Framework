@@ -213,6 +213,11 @@ namespace AndroidUITestFramework
 
         static void PrintStackTrace(StackTrace stackTrace, System.IO.TextWriter writer)
         {
+            if (stackTrace == null)
+            {
+                writer.WriteLine(string.Format(CultureInfo.InvariantCulture, "   {0} ", "<Stack Trace is null>"));
+                return;
+            }
             StackFrame[] frames = stackTrace.GetFrames();
             foreach (StackFrame frame in frames)
             {
