@@ -557,21 +557,21 @@ namespace AndroidUITestFramework
 
             if (a is sbyte || a is byte)
             {
-                if (a is sbyte || a is byte)
+                if (b is sbyte || b is byte)
                 {
-                    return promote_and_equals<sbyte>(a, b);
+                    return promote_and_equals<byte>(a, b);
                 }
                 else if (b is short || b is ushort)
                 {
-                    return promote_and_equals<short>(a, b);
+                    return promote_and_equals<ushort>(a, b);
                 }
                 else if (b is int || b is uint)
                 {
-                    return promote_and_equals<int>(a, b);
+                    return promote_and_equals<uint>(a, b);
                 }
                 else if (b is long || b is ulong)
                 {
-                    return promote_and_equals<long>(a, b);
+                    return promote_and_equals<ulong>(a, b);
                 }
                 else if (b is float)
                 {
@@ -590,15 +590,15 @@ namespace AndroidUITestFramework
             {
                 if (b is sbyte || b is byte || b is short || b is ushort)
                 {
-                    return promote_and_equals<short>(a, b);
+                    return promote_and_equals<ushort>(a, b);
                 }
                 else if (b is int || b is uint)
                 {
-                    return promote_and_equals<int>(a, b);
+                    return promote_and_equals<uint>(a, b);
                 }
                 else if (b is long || b is ulong)
                 {
-                    return promote_and_equals<long>(a, b);
+                    return promote_and_equals<ulong>(a, b);
                 }
                 else if (b is float)
                 {
@@ -617,11 +617,11 @@ namespace AndroidUITestFramework
             {
                 if (b is sbyte || b is byte || b is short || b is ushort || b is int || b is uint)
                 {
-                    return promote_and_equals<int>(a, b);
+                    return promote_and_equals<uint>(a, b);
                 }
                 else if (b is long || b is ulong)
                 {
-                    return promote_and_equals<long>(a, b);
+                    return promote_and_equals<ulong>(a, b);
                 }
                 else if (b is float)
                 {
@@ -640,7 +640,7 @@ namespace AndroidUITestFramework
             {
                 if (b is sbyte || b is byte || b is short || b is ushort || b is int || b is uint || b is long || b is ulong)
                 {
-                    return promote_and_equals<long>(a, b);
+                    return promote_and_equals<ulong>(a, b);
                 }
                 else if (b is float)
                 {
@@ -657,7 +657,7 @@ namespace AndroidUITestFramework
             }
             else if (a is float)
             {
-                if (b is short || b is int || b is long || b is float)
+                if (b is sbyte || b is byte || b is short || b is ushort || b is int || b is uint || b is long || b is ulong || b is float)
                 {
                     return promote_and_equals<float>(a, b);
                 }
@@ -672,7 +672,7 @@ namespace AndroidUITestFramework
             }
             else if (a is double)
             {
-                if (b is short || b is int || b is long || b is float || b is double)
+                if (b is sbyte || b is byte || b is short || b is ushort || b is int || b is uint || b is long || b is ulong || b is float || b is double)
                 {
                     return promote_and_equals<double>(a, b);
                 }
