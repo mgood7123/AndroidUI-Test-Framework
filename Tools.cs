@@ -413,9 +413,6 @@ namespace AndroidUITestFramework
             return isNaN(TA) ? isNaN(TB) : isInfinity(TA) ? isInfinity(TB) : TA.Equals(TB);
         }
 
-        static Type FLOAT_T = typeof(float);
-        static Type DOUBLE_T = typeof(double);
-
         static bool compare_float_double(float a, double b)
         {
             //Console.WriteLine("a: (float) " + a);
@@ -458,84 +455,75 @@ namespace AndroidUITestFramework
         static bool promote_and_equals<T>(object a, object b)
         {
             // special case, float vs double comparison
-            Type ta = a.GetType();
-            Type tb = b.GetType();
-            Type t = typeof(T);
-            bool ta_f = ta == FLOAT_T;
-            bool ta_d = ta == DOUBLE_T;
-            bool tb_f = tb == FLOAT_T;
-            bool tb_d = tb == DOUBLE_T;
-            bool t_f = t == FLOAT_T;
-            bool t_d = t == DOUBLE_T;
             float f1;
             float f2;
             double d1;
             double d2;
-            if (ta_f)
+            if (a.GetType() == typeof(float))
             {
-                if (tb_f)
+                if (b.GetType() == typeof(float))
                 {
                     f1 = (float)a;
                     f2 = (float)b;
                     return float.IsNaN(f1) ? float.IsNaN(f2) : float.IsInfinity(f1) ? float.IsInfinity(f2) : f1.Equals(f2);
                 }
-                else if (tb_d)
+                else if (b.GetType() == typeof(double))
                 {
                     f1 = (float)a;
                     d1 = (double)b;
                     return compare_float_double(f1, d1);
                 }
             }
-            else if (ta_d)
+            else if (a.GetType() == typeof(double))
             {
-                if (tb_d)
+                if (b.GetType() == typeof(double))
                 {
                     d1 = (double)a;
                     d2 = (double)b;
                     return double.IsNaN(d1) ? double.IsNaN(d2) : double.IsInfinity(d1) ? double.IsInfinity(d2) : d1.Equals(d2);
                 }
-                else if (tb_f)
+                else if (b.GetType() == typeof(float))
                 {
                     f1 = (float)b;
                     d1 = (double)a;
                     return compare_float_double(f1, d1);
                 }
             }
-            else if (tb_f)
+            else if (b.GetType() == typeof(float))
             {
-                if (ta_f)
+                if (a.GetType() == typeof(float))
                 {
                     f1 = (float)a;
                     f2 = (float)b;
                     return float.IsNaN(f1) ? float.IsNaN(f2) : float.IsInfinity(f1) ? float.IsInfinity(f2) : f1.Equals(f2);
                 }
-                else if (ta_d)
+                else if (a.GetType() == typeof(double))
                 {
                     f1 = (float)b;
                     d1 = (double)a;
                     return compare_float_double(f1, d1);
                 }
             }
-            else if (tb_d)
+            else if (b.GetType() == typeof(double))
             {
-                if (ta_d)
+                if (a.GetType() == typeof(double))
                 {
                     d1 = (double)a;
                     d2 = (double)b;
                     return double.IsNaN(d1) ? double.IsNaN(d2) : double.IsInfinity(d1) ? double.IsInfinity(d2) : d1.Equals(d2);
                 }
-                else if (ta_f)
+                else if (a.GetType() == typeof(float))
                 {
                     f1 = (float)a;
                     d1 = (double)b;
                     return compare_float_double(f1, d1);
                 }
             }
-            if (t_f)
+            if (typeof(T) == typeof(float))
             {
                 return floating_point_type_value_equals<float>(a, b, float.IsNaN, float.IsInfinity);
             }
-            else if (t_d)
+            else if (typeof(T) == typeof(double))
             {
                 return floating_point_type_value_equals<double>(a, b, double.IsNaN, double.IsInfinity);
             }
@@ -555,21 +543,84 @@ namespace AndroidUITestFramework
                 return a == b;
             }
 
-            if (a is sbyte || a is byte)
+            if (a is sbyte)
             {
-                if (b is sbyte || b is byte)
+                if (b is sbyte)
+                {
+                    return promote_and_equals<sbyte>(a, b);
+                }
+                else if (b is byte)
+                {
+                    return promote_and_equals<byte>((byte)(sbyte)a, b);
+                }
+                else if (b is short)
+                {
+                    return promote_and_equals<short>(a, b);
+                }
+                else if (b is ushort)
+                {
+                    return promote_and_equals<ushort>((byte)(sbyte)a, b);
+                }
+                else if (b is int)
+                {
+                    return promote_and_equals<int>(a, b);
+                }
+                else if (b is uint)
+                {
+                    return promote_and_equals<uint>((byte)(sbyte)a, b);
+                }
+                else if (b is long)
+                {
+                    return promote_and_equals<long>(a, b);
+                }
+                else if (b is ulong)
+                {
+                    return promote_and_equals<ulong>((byte)(sbyte)a, b);
+                }
+                else if (b is float)
+                {
+                    return promote_and_equals<float>(a, b);
+                }
+                else if (b is double)
+                {
+                    return promote_and_equals<double>(a, b);
+                }
+                else
+                {
+                    return a.Equals(b);
+                }
+            }
+            else if (a is byte)
+            {
+                if (b is sbyte)
+                {
+                    return promote_and_equals<byte>(a, (byte)(sbyte)b);
+                }
+                else if (b is byte)
                 {
                     return promote_and_equals<byte>(a, b);
                 }
-                else if (b is short || b is ushort)
+                else if (b is short)
+                {
+                    return promote_and_equals<ushort>(a, (ushort)(short)b);
+                }
+                else if (b is ushort)
                 {
                     return promote_and_equals<ushort>(a, b);
                 }
-                else if (b is int || b is uint)
+                else if (b is int)
+                {
+                    return promote_and_equals<uint>(a, (uint)(int)b);
+                }
+                else if (b is uint)
                 {
                     return promote_and_equals<uint>(a, b);
                 }
-                else if (b is long || b is ulong)
+                else if (b is long)
+                {
+                    return promote_and_equals<ulong>(a, (ulong)(long)b);
+                }
+                else if (b is ulong)
                 {
                     return promote_and_equals<ulong>(a, b);
                 }
@@ -586,17 +637,80 @@ namespace AndroidUITestFramework
                     return a.Equals(b);
                 }
             }
-            else if (a is short || a is ushort)
+            else if (a is short)
             {
-                if (b is sbyte || b is byte || b is short || b is ushort)
+                if (b is sbyte)
+                {
+                    return promote_and_equals<short>(a, b);
+                }
+                else if (b is short)
+                {
+                    return promote_and_equals<short>(a, b);
+                }
+                else if (b is byte)
+                {
+                    return promote_and_equals<ushort>((ushort)(short)a, b);
+                }
+                else if (b is ushort)
+                {
+                    return promote_and_equals<ushort>((ushort)(short)a, b);
+                }
+                else if (b is int)
+                {
+                    return promote_and_equals<int>(a, b);
+                }
+                else if (b is uint)
+                {
+                    return promote_and_equals<uint>((ushort)(short)a, b);
+                }
+                else if (b is long)
+                {
+                    return promote_and_equals<long>(a, b);
+                }
+                else if (b is ulong)
+                {
+                    return promote_and_equals<ulong>((ushort)(short)a, b);
+                }
+                else if (b is float)
+                {
+                    return promote_and_equals<float>(a, b);
+                }
+                else if (b is double)
+                {
+                    return promote_and_equals<double>(a, b);
+                }
+                else
+                {
+                    return a.Equals(b);
+                }
+            }
+            else if (a is ushort)
+            {
+                if (b is sbyte)
+                {
+                    return promote_and_equals<ushort>(a, (byte)(sbyte)b);
+                }
+                else if (b is short)
+                {
+                    return promote_and_equals<ushort>(a, (ushort)(short)b);
+                }
+                else if (b is byte || b is ushort)
                 {
                     return promote_and_equals<ushort>(a, b);
                 }
-                else if (b is int || b is uint)
+                else if (b is int)
+                {
+                    return promote_and_equals<uint>(a, (uint)(int)b);
+                }
+                else if (b is uint)
                 {
                     return promote_and_equals<uint>(a, b);
                 }
-                else if (b is long || b is ulong)
+                else if (b is long)
+                {
+                    return promote_and_equals<ulong>(a, (ulong)(long)b);
+                }
+                else if (b is ulong)
                 {
                     return promote_and_equals<ulong>(a, b);
                 }
@@ -613,13 +727,84 @@ namespace AndroidUITestFramework
                     return a.Equals(b);
                 }
             }
-            else if (a is int || a is uint)
+            else if (a is int)
             {
-                if (b is sbyte || b is byte || b is short || b is ushort || b is int || b is uint)
+                if (b is sbyte)
+                {
+                    return promote_and_equals<int>(a, b);
+                }
+                else if (b is short)
+                {
+                    return promote_and_equals<int>(a, b);
+                }
+                else if (b is int)
+                {
+                    return promote_and_equals<int>(a, b);
+                }
+                else if (b is byte)
+                {
+                    return promote_and_equals<uint>((uint)(int)a, b);
+                }
+                else if (b is ushort)
+                {
+                    return promote_and_equals<uint>((uint)(int)a, b);
+                }
+                else if (b is uint)
+                {
+                    return promote_and_equals<uint>((uint)(int)a, b);
+                }
+                else if (b is long)
+                {
+                    return promote_and_equals<long>(a, b);
+                }
+                else if (b is ulong)
+                {
+                    return promote_and_equals<ulong>((uint)(int)a, b);
+                }
+                else if (b is float)
+                {
+                    return promote_and_equals<float>(a, b);
+                }
+                else if (b is double)
+                {
+                    return promote_and_equals<double>(a, b);
+                }
+                else
+                {
+                    return a.Equals(b);
+                }
+            }
+            else if (a is uint)
+            {
+                if (b is sbyte)
+                {
+                    return promote_and_equals<int>((int)(uint)a, b);
+                }
+                else if (b is short)
+                {
+                    return promote_and_equals<int>((int)(uint)a, b);
+                }
+                else if (b is int)
+                {
+                    return promote_and_equals<int>((int)(uint)a, b);
+                }
+                else if (b is byte)
                 {
                     return promote_and_equals<uint>(a, b);
                 }
-                else if (b is long || b is ulong)
+                else if (b is ushort)
+                {
+                    return promote_and_equals<uint>(a, b);
+                }
+                else if (b is uint)
+                {
+                    return promote_and_equals<uint>(a, b);
+                }
+                else if (b is long)
+                {
+                    return promote_and_equals<long>((int)(uint)a, b);
+                }
+                else if (b is ulong)
                 {
                     return promote_and_equals<ulong>(a, b);
                 }
@@ -636,9 +821,84 @@ namespace AndroidUITestFramework
                     return a.Equals(b);
                 }
             }
-            else if (a is long || a is ulong)
+            else if (a is long)
             {
-                if (b is sbyte || b is byte || b is short || b is ushort || b is int || b is uint || b is long || b is ulong)
+                if (b is sbyte)
+                {
+                    return promote_and_equals<long>(a, b);
+                }
+                else if (b is short)
+                {
+                    return promote_and_equals<long>(a, b);
+                }
+                else if (b is int)
+                {
+                    return promote_and_equals<long>(a, b);
+                }
+                else if (b is long)
+                {
+                    return promote_and_equals<long>(a, b);
+                }
+                else if (b is byte)
+                {
+                    return promote_and_equals<ulong>((ulong)(long)a, b);
+                }
+                else if (b is ushort)
+                {
+                    return promote_and_equals<ulong>((ulong)(long)a, b);
+                }
+                else if (b is uint)
+                {
+                    return promote_and_equals<ulong>((ulong)(long)a, b);
+                }
+                else if (b is ulong)
+                {
+                    return promote_and_equals<ulong>((ulong)(long)a, b);
+                }
+                else if (b is float)
+                {
+                    return promote_and_equals<float>(a, b);
+                }
+                else if (b is double)
+                {
+                    return promote_and_equals<double>(a, b);
+                }
+                else
+                {
+                    return a.Equals(b);
+                }
+            }
+            else if (a is ulong)
+            {
+                if (b is sbyte)
+                {
+                    return promote_and_equals<long>((long)(ulong)a, b);
+                }
+                else if (b is short)
+                {
+                    return promote_and_equals<long>((long)(ulong)a, b);
+                }
+                else if (b is int)
+                {
+                    return promote_and_equals<long>((long)(ulong)a, b);
+                }
+                else if (b is long)
+                {
+                    return promote_and_equals<long>((long)(ulong)a, b);
+                }
+                else if (b is byte)
+                {
+                    return promote_and_equals<ulong>(a, b);
+                }
+                else if (b is ushort)
+                {
+                    return promote_and_equals<ulong>(a, b);
+                }
+                else if (b is uint)
+                {
+                    return promote_and_equals<ulong>(a, b);
+                }
+                else if (b is ulong)
                 {
                     return promote_and_equals<ulong>(a, b);
                 }
