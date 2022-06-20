@@ -35,8 +35,8 @@ namespace AndroidUITestFramework
         NewLineConverter newLineConverter;
 
         static bool IO_LOCKED = true;
-        private static readonly object LOCK = new object();
-        private static readonly object IO_LOCK = new object();
+        private static readonly object LOCK = new();
+        private static readonly object IO_LOCK = new();
 
         public static void UnlockIO()
         {

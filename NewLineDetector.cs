@@ -6,7 +6,7 @@
         int index;
         int previousIndex;
         public System.Func<string> NewLine;
-        private static object LOCK = new object();
+        private static object LOCK = new();
 
         public NewLineDetector(System.IO.TextWriter textWriter, string from)
         {

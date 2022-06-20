@@ -10,7 +10,7 @@ namespace AndroidUITestFramework
 
         List<(NewLineDetector from, string to)> conversions;
         List<(NewLineDetector from, string to)> eliminated;
-        private static object LOCK = new object();
+        private static object LOCK = new();
 
         public NewLineConverter(System.IO.TextWriter textWriter)
         {
@@ -24,7 +24,7 @@ namespace AndroidUITestFramework
         {
             lock (LOCK)
             {
-                NewLineDetector conversion = new NewLineDetector(textWriter, from);
+                NewLineDetector conversion = new(textWriter, from);
                 conversions.Add((conversion, to));
                 conversions.Sort((a, b) =>
                 {
